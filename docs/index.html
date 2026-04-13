@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nb-hub · AI 开源生态聚合站</title>
+    <meta
+      name="description"
+      content="nb-hub 聚合 AI 框架、工具、MCP、Skill 与 Agent/Infra 资源，提供中文优先的精选导航与趋势观察。"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090b10'/%3E%3Cpath d='M18 46V18h9l10 14V18h9v28h-9L27 32v14z' fill='%2374e2c0'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grain-layer" aria-hidden="true"></div>
+
+    <header class="topbar container reveal">
+      <a class="brand" href="./index.html" aria-label="nb-hub 首页">
+        <span class="brand-mark">nb</span>
+        <span class="brand-text">hub</span>
+      </a>
+
+      <nav class="topnav" aria-label="主要导航">
+        <a href="#categories">分类入口</a>
+        <a href="#routes">快速入口</a>
+        <a href="#highlights">精选卡片</a>
+        <a href="#insights">趋势</a>
+      </nav>
+
+      <div class="topbar-actions">
+        <a class="ghost-link" href="./admin.html">精选后台</a>
+        <a class="mini-link" href="./explore.html">进入资源库</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero container reveal" id="home">
+        <div class="hero-copy">
+          <p class="eyebrow">AI OPEN-SOURCE AGGREGATION · CN FIRST</p>
+          <h1>先看入口，再按卡片跳到真正需要的那一层</h1>
+          <p class="lead">
+            nb-hub 不再把所有内容堆在一个页面里。首页只承担导航与判断：你可以先看分类、精选和快速入口，再跳转到独立资源库页继续搜索、筛选和深入浏览。
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="./explore.html">浏览全部资源</a>
+            <a class="btn btn-ghost" href="./explore.html?featured=true">只看编辑精选</a>
+          </div>
+
+          <div class="metric-row" role="list" aria-label="站点统计">
+            <article class="metric" role="listitem">
+              <strong id="metric-total">0</strong>
+              <span>收录条目</span>
+            </article>
+            <article class="metric" role="listitem">
+              <strong id="metric-featured">0</strong>
+              <span>编辑精选</span>
+            </article>
+            <article class="metric" role="listitem">
+              <strong id="metric-categories">0</strong>
+              <span>核心分类</span>
+            </article>
+          </div>
+        </div>
+
+        <aside class="hero-panel" aria-label="热度快照">
+          <div class="panel-head">
+            <h2>热度快照</h2>
+            <span>推荐从这里开始</span>
+          </div>
+          <ol class="trend-list" id="trend-list"></ol>
+        </aside>
+      </section>
+
+      <section class="section container reveal" id="categories">
+        <div class="section-head compact-head">
+          <p class="section-kicker">Category Entry</p>
+          <h2>分类入口</h2>
+          <p>每张卡片都会跳转到一个已经预设筛选条件的浏览页，你不需要在首页看到全部内容。</p>
+        </div>
+        <div class="card-grid" id="category-grid"></div>
+      </section>
+
+      <section class="section container reveal" id="routes">
+        <div class="section-head compact-head">
+          <p class="section-kicker">Browse Paths</p>
+          <h2>快速入口</h2>
+          <p>按任务目标进入，而不是先被一整页信息淹没。</p>
+        </div>
+        <div class="card-grid route-grid" id="route-grid"></div>
+      </section>
+
+      <section class="section container reveal" id="highlights">
+        <div class="section-head compact-head">
+          <p class="section-kicker">Spotlight Cards</p>
+          <h2>精选卡片</h2>
+          <p>卡片点击后会跳到资源库中的对应上下文，而不是直接在首页把所有条目铺开。</p>
+        </div>
+        <div class="card-grid feature-grid" id="feature-grid"></div>
+      </section>
+
+      <section class="section container reveal" id="insights">
+        <div class="section-head compact-head">
+          <p class="section-kicker">Trend Narrative</p>
+          <h2>趋势判断</h2>
+          <p>这里保留轻量观察，帮助你决定下一步应该点进哪条路线。</p>
+        </div>
+        <div class="card-grid insight-grid" id="insight-grid"></div>
+      </section>
+
+      <section class="section container reveal" id="submit">
+        <div class="submit-cta">
+          <p class="section-kicker">Contribute</p>
+          <h2>把你的项目放进下一轮卡片入口</h2>
+          <p>
+            欢迎提交 Issue / PR。建议附上项目定位、适用场景、仓库链接和更新频率。首页入口会优先展示结构清晰、适合导航的高质量项目。
+          </p>
+
+          <div class="hero-actions">
+            <a
+              id="submit-issue-link"
+              class="btn btn-primary"
+              href="https://github.com"
+              target="_blank"
+              rel="noreferrer"
+              >提交收录 Issue</a
+            >
+            <a class="btn btn-ghost" href="./admin.html">打开精选后台</a>
+            <a class="btn btn-ghost" href="./explore.html">进入资源库页</a>
+          </div>
+
+          <p class="submit-hint" id="submit-hint">站点会自动尝试推断当前仓库地址并生成提交链接。</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer container reveal">
+      <p>© <span id="year"></span> nb-hub · AI 大模型外围生态开源合集</p>
+      <div class="footer-links">
+        <a href="./explore.html">资源库</a>
+        <a href="#home">返回顶部 ↑</a>
+      </div>
+    </footer>
+
+    <script src="./data.js"></script>
+    <script src="./home.js"></script>
+  </body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nb-hub · 资源库</title>
+    <meta name="description" content="nb-hub 资源库页，支持分类跳转、关键词搜索与精选筛选。" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090b10'/%3E%3Cpath d='M18 46V18h9l10 14V18h9v28h-9L27 32v14z' fill='%2374e2c0'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grain-layer" aria-hidden="true"></div>
+
+    <header class="topbar container reveal">
+      <a class="brand" href="./index.html" aria-label="nb-hub 首页">
+        <span class="brand-mark">nb</span>
+        <span class="brand-text">hub</span>
+      </a>
+
+      <nav class="topnav" aria-label="资源库导航">
+        <a href="./index.html">首页</a>
+        <a href="#controls">筛选</a>
+        <a href="#results">结果</a>
+      </nav>
+
+      <a class="mini-link" href="./index.html">返回首页</a>
+    </header>
+
+    <main>
+      <section class="page-hero container reveal">
+        <div class="page-copy">
+          <p class="eyebrow">Resource Library</p>
+          <h1>资源浏览页</h1>
+          <p class="lead">
+            这里才是完整浏览层。你可以用首页卡片跳到这里，也可以直接搜索、筛选，再点击资源卡片跳到外部项目。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="./index.html">回到首页入口</a>
+            <a class="btn btn-ghost" href="./explore.html?featured=true">只看编辑精选</a>
+          </div>
+        </div>
+
+        <aside class="page-side" aria-label="当前浏览状态">
+          <div class="page-side-head">
+            <h2>当前视图</h2>
+            <span id="active-summary">全部资源</span>
+          </div>
+          <ul class="side-list">
+            <li class="side-item">
+              <strong id="total-count">0 个项目</strong>
+              <p>当前匹配结果</p>
+            </li>
+            <li class="side-item">
+              <strong id="active-category">全部分类</strong>
+              <p>活跃分类</p>
+            </li>
+            <li class="side-item">
+              <strong id="active-query">无关键词</strong>
+              <p>搜索上下文</p>
+            </li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="section container reveal" id="controls">
+        <div class="section-head compact-head">
+          <p class="section-kicker">Search & Filter</p>
+          <h2>筛选控制台</h2>
+          <p>这里统一承接首页所有卡片跳转条件，也支持你手动重新筛选。</p>
+        </div>
+
+        <div class="controls-panel">
+          <div class="controls-grid">
+            <label class="search-control" for="search-input">
+              <span>搜索项目</span>
+              <input
+                id="search-input"
+                type="search"
+                placeholder="按名称、描述或标签搜索，例如：Claude / MCP / Gateway"
+                autocomplete="off"
+              />
+            </label>
+
+            <div class="toggle-group">
+              <label class="toggle-control" for="featured-only">
+                <input id="featured-only" type="checkbox" />
+                <span>只看编辑精选</span>
+              </label>
+              <p class="helper-copy">切换筛选时，地址栏参数会同步更新，方便分享当前视图。</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="helper-copy">分类切换</p>
+            <div class="chip-wrap" id="category-chips" aria-label="分类筛选"></div>
+          </div>
+        </div>
+
+        <div class="result-bar">
+          <p id="result-summary">共 0 条结果</p>
+          <button type="button" class="text-btn" id="clear-filters">清空筛选</button>
+        </div>
+
+        <div class="resource-grid" id="results"></div>
+      </section>
+
+      <section class="section container reveal">
+        <div class="submit-cta">
+          <p class="section-kicker">Contribute</p>
+          <h2>继续补充你的资源池</h2>
+          <p>这个浏览页适合承接更多条目。后续你再给我仓库地址，我可以继续抓信息、分类并直接写入数据源。</p>
+          <div class="hero-actions">
+            <a id="submit-issue-link" class="btn btn-primary" href="https://github.com" target="_blank" rel="noreferrer">提交收录 Issue</a>
+            <a class="btn btn-ghost" href="./index.html">返回首页</a>
+          </div>
+          <p class="submit-hint" id="submit-hint">站点会自动尝试推断当前仓库地址并生成提交链接。</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer container reveal">
+      <p>© <span id="year"></span> nb-hub · AI 大模型外围生态开源合集</p>
+      <div class="footer-links">
+        <a href="./index.html">首页</a>
+        <a href="#controls">返回筛选区 ↑</a>
+      </div>
+    </footer>
+
+    <script src="./data.js"></script>
+    <script src="./explore.js"></script>
+  </body>
+</html>
