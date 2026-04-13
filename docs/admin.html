@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nb-hub · 精选管理</title>
+    <meta name="description" content="nb-hub 精选项目管理页，可通过勾选方式调整首页与资源页中的编辑精选。" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090b10'/%3E%3Cpath d='M18 46V18h9l10 14V18h9v28h-9L27 32v14z' fill='%2374e2c0'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grain-layer" aria-hidden="true"></div>
+
+    <header class="topbar container reveal">
+      <a class="brand" href="./index.html" aria-label="nb-hub 首页">
+        <span class="brand-mark">nb</span>
+        <span class="brand-text">hub</span>
+      </a>
+
+      <nav class="topnav" aria-label="精选管理导航">
+        <a href="./index.html">首页</a>
+        <a href="./explore.html">资源库</a>
+        <a href="#admin-panel">管理面板</a>
+      </nav>
+
+      <div class="topbar-actions">
+        <a class="ghost-link" href="./explore.html?featured=true">查看当前精选</a>
+        <a class="mini-link" href="./index.html">返回首页</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero container reveal">
+        <div class="page-copy">
+          <p class="eyebrow">Featured CMS</p>
+          <h1>编辑精选管理面板</h1>
+          <p class="lead">
+            这个后台页不依赖服务端，专门适配 GitHub Pages。你可以先筛选项目，再做单项确认、当前视图一键精选或一键取消精选，修改会即时反映到首页和资源库页。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="./explore.html?featured=true">查看精选结果</a>
+            <a class="btn btn-ghost" href="./index.html">返回首页</a>
+          </div>
+        </div>
+
+        <aside class="page-side" aria-label="管理状态">
+          <div class="page-side-head">
+            <h2>状态概览</h2>
+            <span id="admin-status">本地配置模式</span>
+          </div>
+          <ul class="side-list">
+            <li class="side-item">
+              <strong id="admin-featured-count">0 个项目</strong>
+              <p>当前生效的精选数量</p>
+            </li>
+            <li class="side-item">
+              <strong id="admin-override-count">0 条覆盖</strong>
+              <p>相对默认数据的本地改动</p>
+            </li>
+            <li class="side-item">
+              <strong>GitHub Pages 兼容</strong>
+              <p>无需数据库；如需跨设备同步，可先导出覆盖 JSON 再手动保存。</p>
+            </li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="section container reveal" id="admin-panel">
+        <div class="section-head compact-head">
+          <p class="section-kicker">Manage Picks</p>
+          <h2>CMS 操作台</h2>
+          <p>这里支持单项确认、按当前类别或当前搜索结果批量操作，以及本地覆盖配置导出。</p>
+        </div>
+
+        <div class="controls-panel admin-shell">
+          <div class="admin-panel-head">
+            <div>
+              <p class="section-kicker">Control Center</p>
+              <h3>精选运营控制中心</h3>
+            </div>
+            <span class="meta-chip">本地即时生效</span>
+          </div>
+
+          <div class="controls-grid admin-controls-grid">
+            <label class="search-control" for="admin-search">
+              <span>搜索项目</span>
+              <input id="admin-search" type="search" placeholder="按名称、描述或标签搜索项目" autocomplete="off" />
+            </label>
+
+            <div class="toggle-group">
+              <label class="toggle-control" for="admin-show-overrides">
+                <input id="admin-show-overrides" type="checkbox" />
+                <span>只看本地改动过的项目</span>
+              </label>
+              <p class="helper-copy">这里的“改动”是相对 `docs/data.js` 默认精选值的覆盖。</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="helper-copy">分类过滤</p>
+            <div class="chip-wrap" id="admin-category-chips" aria-label="精选管理分类筛选"></div>
+          </div>
+
+          <div class="admin-toolbar">
+            <div class="admin-toolbar-copy">
+              <p id="admin-result-summary">共 0 条结果</p>
+              <p class="helper-copy" id="admin-scope-summary">批量操作会作用于当前分类与当前搜索结果。</p>
+            </div>
+
+            <div class="admin-actions admin-actions-primary">
+              <button type="button" class="btn btn-primary btn-small" id="mark-current-featured">当前结果一键精选</button>
+              <button type="button" class="btn btn-ghost btn-small" id="unmark-current-featured">当前结果全部取消精选</button>
+            </div>
+
+            <div class="admin-actions admin-actions-secondary">
+              <button type="button" class="text-btn" id="reset-featured">恢复默认精选</button>
+              <button type="button" class="text-btn" id="copy-overrides">复制覆盖 JSON</button>
+            </div>
+          </div>
+
+          <p class="helper-copy admin-feedback" id="admin-feedback">你可以先切换分类，再执行当前视图范围的一键精选或一键取消精选。</p>
+        </div>
+
+        <div class="admin-grid" id="admin-grid"></div>
+      </section>
+
+      <section class="section container reveal">
+        <div class="submit-cta">
+          <p class="section-kicker">Sync Tip</p>
+          <h2>如果你想跨设备同步</h2>
+          <p>
+            当前后台是最轻量、最适合 GitHub Pages 的做法：配置保存在浏览器本地。如果你后面需要“任何设备都能统一管理精选”，下一步更适合升级为 GitHub Issue / JSON 文件驱动式后台。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="./explore.html?featured=true">打开精选结果页</a>
+            <a class="btn btn-ghost" href="./index.html">回首页</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer container reveal">
+      <p>© <span id="year"></span> nb-hub · AI 大模型外围生态开源合集</p>
+      <div class="footer-links">
+        <a href="./index.html">首页</a>
+        <a href="./explore.html">资源库</a>
+      </div>
+    </footer>
+
+    <dialog class="admin-dialog" id="confirm-dialog">
+      <form method="dialog" class="dialog-card">
+        <p class="section-kicker">Confirm Action</p>
+        <h2 id="confirm-title">确认操作</h2>
+        <p id="confirm-message">你确定要执行这个操作吗？</p>
+        <div class="dialog-actions">
+          <button type="submit" class="btn btn-ghost" value="cancel">取消</button>
+          <button type="submit" class="btn btn-primary" id="confirm-accept" value="confirm">确认</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./data.js"></script>
+    <script src="./admin.js"></script>
+  </body>
+</html>
