@@ -1,5 +1,5 @@
 (function initExplorePage() {
-  const { getEffectiveResources, getCategories, setupSubmitLinks } = window.nbHubData;
+  const { getEffectiveResources, getCategories, setupSubmitLinks, getCompactReviewLabel } = window.nbHubData;
   const categories = ["全部", ...getCategories()];
 
   const elements = {
@@ -111,7 +111,10 @@
                 <span class="pill">${item.category}</span>
                 ${item.featured ? '<span class="pill is-featured">精选</span>' : `<span class="pill">${item.sourceType}</span>`}
               </div>
-              <h3>${item.name}</h3>
+              <div class="title-row">
+                <h3>${item.name}</h3>
+                ${item.adminReview ? `<div class="editor-note-pill" title="${item.adminReview}">${getCompactReviewLabel(item.adminReview)}</div>` : ""}
+              </div>
               <p class="resource-description">${item.description}</p>
               <div class="resource-meta">
                 <span class="tag">${item.sourceType}</span>

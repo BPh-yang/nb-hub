@@ -465,6 +465,16 @@ h3 {
   font-size: 1.22rem;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title-row h3 {
+  min-width: 0;
+}
+
 .pill,
 .tag,
 .meta-chip {
@@ -725,6 +735,42 @@ input[type="search"]:focus-visible {
   gap: var(--space-2);
 }
 
+.admin-review-field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.admin-review-field span {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.admin-review-field textarea {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--color-text);
+  padding: 0.8rem 0.9rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.admin-review-field textarea:focus-visible {
+  outline: 2px solid rgba(45, 141, 108, 0.28);
+  outline-offset: 2px;
+}
+
+.admin-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
 .admin-toggle-btn {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
@@ -799,6 +845,28 @@ input[type="search"]:focus-visible {
 .resource-description {
   margin: 0;
   font-size: var(--text-sm);
+}
+
+.editor-note-pill {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  max-width: min(48%, 240px);
+  width: fit-content;
+  padding: 0.32rem 0.68rem;
+  border-radius: 999px;
+  border: 1px solid rgba(181, 123, 21, 0.28);
+  background: linear-gradient(135deg, #fff3c8, #f3c45c 56%, #d89b1d);
+  color: #6b4208;
+  box-shadow: 0 6px 14px rgba(190, 139, 38, 0.18);
+  font-family: var(--font-ui);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .empty-state {

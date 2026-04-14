@@ -1,5 +1,5 @@
 (function initHomePage() {
-  const { trendNarrative, categoryMeta, getCategories, buildExploreUrl, setupSubmitLinks, getEffectiveResources } = window.nbHubData;
+  const { trendNarrative, categoryMeta, getCategories, buildExploreUrl, setupSubmitLinks, getEffectiveResources, getCompactReviewLabel } = window.nbHubData;
 
   const elements = {
     categoryGrid: document.getElementById("category-grid"),
@@ -124,7 +124,10 @@
               <span class="pill is-featured">精选</span>
               <span class="pill">${item.category}</span>
             </div>
-            <h3>${item.name}</h3>
+            <div class="title-row">
+              <h3>${item.name}</h3>
+              ${item.adminReview ? `<div class="editor-note-pill" title="${item.adminReview}">${getCompactReviewLabel(item.adminReview)}</div>` : ""}
+            </div>
             <p class="card-copy">${item.description}</p>
             <div class="entry-meta">
               ${(item.tags || []).slice(0, 3).map((tag) => `<span class="tag">${tag}</span>`).join("")}
