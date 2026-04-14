@@ -2,10 +2,13 @@
   const {
     getEffectiveResources,
     getFeaturedOverrides,
+    getReviewOverrides,
     getCategories,
     updateFeaturedOverride,
     setFeaturedOverridesForIds,
     clearFeaturedOverrides,
+    updateAdminReviewOverride,
+    clearAdminReviewOverrides,
     exportFeaturedOverrides
   } = window.nbHubData;
 
@@ -23,6 +26,7 @@
     markCurrentFeatured: document.getElementById("mark-current-featured"),
     unmarkCurrentFeatured: document.getElementById("unmark-current-featured"),
     resetFeatured: document.getElementById("reset-featured"),
+    resetReviews: document.getElementById("reset-reviews"),
     copyOverrides: document.getElementById("copy-overrides"),
     confirmDialog: document.getElementById("confirm-dialog"),
     confirmTitle: document.getElementById("confirm-title"),
@@ -122,13 +126,15 @@
   function renderSummary() {
     const resources = getResources();
     const overrides = getFeaturedOverrides();
+    const reviewOverrides = getReviewOverrides();
     const featuredCount = resources.filter((item) => item.featured).length;
     const filtered = getFilteredResources();
     const scopeLabel = getScopeLabel();
 
     elements.featuredCount.textContent = `${featuredCount} 个项目`;
-    elements.overrideCount.textContent = `${Object.keys(overrides).length} 条覆盖`;
-    elements.status.textContent = Object.keys(overrides).length > 0 ? "已启用本地覆盖" : "当前使用默认精选";
+    elements.overrideCount.textContent = `${Object.keys(overrides).length} 条精选覆盖 / ${Object.keys(reviewOverrides).length} 条短评覆盖`;
+    elements.status.textContent =
+      Object.keys(overrides).length > 0 || Object.keys(reviewOverrides).length > 0 ? "已启用本地覆盖" : "当前使用默认配置";
     elements.scopeSummary.textContent = `${scopeLabel}中共有 ${filtered.length} 个项目，批量操作会先弹出确认框。`;
     elements.markCurrentFeatured.textContent = `${scopeLabel}一键全部精选`;
     elements.unmarkCurrentFeatured.textContent = `${scopeLabel}一键全部取消精选`;
@@ -169,7 +175,16 @@
             <div class="admin-state-row">
               <span class="tag">默认：${item.defaultFeatured ? "精选" : "非精选"}</span>
               ${item.hasFeaturedOverride ? '<span class="tag">已覆盖</span>' : '<span class="tag">未覆盖</span>'}
+              ${item.hasAdminReviewOverride ? '<span class="tag">短评已覆盖</span>' : '<span class="tag">短评默认</span>'}
               <span class="tag">${item.sourceType}</span>
+            </div>
+            <label class="admin-review-field" for="review-${item.id}">
+              <span>管理员短评</span>
+              <textarea id="review-${item.id}" data-review-id="${item.id}" rows="3" placeholder="写一句你对这个项目的真实看法，前台会以小标签形式附加显示。">${item.adminReview || ""}</textarea>
+            </label>
+            <div class="admin-inline-actions">
+              <button type="button" class="text-btn admin-save-review" data-review-id="${item.id}" data-resource-name="${item.name}">保存短评</button>
+              <button type="button" class="text-btn admin-clear-review" data-review-id="${item.id}" data-resource-name="${item.name}">恢复默认介绍</button>
             </div>
             <div class="entry-meta">
               ${(item.tags || []).slice(0, 4).map((tag) => `<span class="tag">${tag}</span>`).join("")}
@@ -204,6 +219,52 @@
 
         updateFeaturedOverride(resourceId, nextFeatured);
         setFeedback(nextFeatured ? `已将「${resourceName}」加入编辑精选。` : `已将「${resourceName}」移出编辑精选。`);
+        renderAll();
+      });
+    });
+
+    elements.adminGrid.querySelectorAll(".admin-save-review[data-review-id]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const reviewId = button.dataset.reviewId || "";
+        const resourceName = button.dataset.resourceName || "该项目";
+        const textarea = elements.adminGrid.querySelector(`textarea[data-review-id="${reviewId}"]`);
+        const nextReview = textarea instanceof HTMLTextAreaElement ? textarea.value.trim() : "";
+
+        const confirmed = await openConfirmDialog({
+          title: "确认保存管理员短评",
+          message: `确定要保存「${resourceName}」的管理员短评吗？前台会以小标签形式附加显示。`,
+          confirmLabel: "确认保存"
+        });
+
+        if (!confirmed) {
+          setFeedback(`已取消保存「${resourceName}」的管理员短评。`);
+          return;
+        }
+
+        updateAdminReviewOverride(reviewId, nextReview);
+        setFeedback(nextReview ? `已保存「${resourceName}」的管理员短评。` : `已将「${resourceName}」恢复为默认项目介绍。`);
+        renderAll();
+      });
+    });
+
+    elements.adminGrid.querySelectorAll(".admin-clear-review[data-review-id]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const reviewId = button.dataset.reviewId || "";
+        const resourceName = button.dataset.resourceName || "该项目";
+
+        const confirmed = await openConfirmDialog({
+          title: "确认恢复默认介绍",
+          message: `确定要清空「${resourceName}」的管理员短评，并恢复为默认项目介绍吗？`,
+          confirmLabel: "确认恢复"
+        });
+
+        if (!confirmed) {
+          setFeedback(`已取消恢复「${resourceName}」的默认介绍。`);
+          return;
+        }
+
+        updateAdminReviewOverride(reviewId, "");
+        setFeedback(`已将「${resourceName}」恢复为默认项目介绍。`);
         renderAll();
       });
     });
@@ -291,6 +352,23 @@
 
       clearFeaturedOverrides();
       setFeedback("已恢复默认精选配置。");
+      renderAll();
+    });
+
+    elements.resetReviews.addEventListener("click", async () => {
+      const confirmed = await openConfirmDialog({
+        title: "确认清空全部短评覆盖",
+        message: "确定要清空所有管理员短评覆盖，并恢复前台默认项目介绍吗？",
+        confirmLabel: "确认清空"
+      });
+
+      if (!confirmed) {
+        setFeedback("已取消清空全部短评覆盖。");
+        return;
+      }
+
+      clearAdminReviewOverrides();
+      setFeedback("已清空全部管理员短评覆盖。");
       renderAll();
     });
 

@@ -288,6 +288,7 @@
   };
 
   const FEATURED_STORAGE_KEY = "nbHubFeaturedOverrides";
+  const REVIEW_STORAGE_KEY = "nbHubAdminReviewOverrides";
 
   const preferredCategoryOrder = ["Framework", "Tool", "MCP", "Skill", "Infra", "Agent/App", "Collection"];
 
@@ -315,6 +316,10 @@
 
   const defaultFeaturedMap = Object.fromEntries(
     getBaseResources().map((item) => [item.id, Boolean(item.featured)])
+  );
+
+  const defaultReviewMap = Object.fromEntries(
+    getBaseResources().map((item) => [item.id, item.adminReview || ""])
   );
 
   function sanitizeFeaturedOverrides(input) {
@@ -346,6 +351,37 @@
     }
   }
 
+  function sanitizeReviewOverrides(input) {
+    if (!input || typeof input !== "object" || Array.isArray(input)) {
+      return {};
+    }
+
+    return Object.fromEntries(
+      Object.entries(input).filter(
+        ([key, value]) => Object.hasOwn(defaultReviewMap, key) && typeof value === "string"
+      )
+    );
+  }
+
+  function getReviewOverrides() {
+    const storage = getStorage();
+
+    if (!storage) {
+      return {};
+    }
+
+    try {
+      const raw = storage.getItem(REVIEW_STORAGE_KEY);
+      if (!raw) {
+        return {};
+      }
+
+      return sanitizeReviewOverrides(JSON.parse(raw));
+    } catch {
+      return {};
+    }
+  }
+
   function persistFeaturedOverrides(overrides) {
     const storage = getStorage();
 
@@ -363,18 +399,42 @@
     storage.setItem(FEATURED_STORAGE_KEY, JSON.stringify(safeOverrides));
   }
 
+  function persistReviewOverrides(overrides) {
+    const storage = getStorage();
+
+    if (!storage) {
+      return;
+    }
+
+    const safeOverrides = sanitizeReviewOverrides(overrides);
+
+    if (Object.keys(safeOverrides).length === 0) {
+      storage.removeItem(REVIEW_STORAGE_KEY);
+      return;
+    }
+
+    storage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(safeOverrides));
+  }
+
   function getEffectiveResources() {
     const overrides = getFeaturedOverrides();
+    const reviewOverrides = getReviewOverrides();
 
     return getBaseResources().map((item) => {
       const hasOverride = typeof overrides[item.id] === "boolean";
       const defaultFeatured = Boolean(item.featured);
+      const defaultAdminReview = defaultReviewMap[item.id] || "";
+      const hasReviewOverride = typeof reviewOverrides[item.id] === "string";
+      const adminReview = hasReviewOverride ? reviewOverrides[item.id] : defaultAdminReview;
 
       return {
         ...item,
         defaultFeatured,
+        defaultAdminReview,
         featured: hasOverride ? overrides[item.id] : defaultFeatured,
-        hasFeaturedOverride: hasOverride
+        hasFeaturedOverride: hasOverride,
+        adminReview,
+        hasAdminReviewOverride: hasReviewOverride
       };
     });
   }
@@ -423,14 +483,51 @@
     return getEffectiveResources();
   }
 
+  function updateAdminReviewOverride(resourceId, reviewText) {
+    const overrides = getReviewOverrides();
+    const defaultReview = defaultReviewMap[resourceId];
+
+    if (typeof defaultReview !== "string") {
+      return getEffectiveResources();
+    }
+
+    if (reviewText === defaultReview || reviewText === "") {
+      delete overrides[resourceId];
+    } else {
+      overrides[resourceId] = reviewText;
+    }
+
+    persistReviewOverrides(overrides);
+    return getEffectiveResources();
+  }
+
+  function clearAdminReviewOverrides() {
+    persistReviewOverrides({});
+    return getEffectiveResources();
+  }
+
   function exportFeaturedOverrides() {
-    return JSON.stringify(getFeaturedOverrides(), null, 2);
+    return JSON.stringify(
+      {
+        featured: getFeaturedOverrides(),
+        reviews: getReviewOverrides()
+      },
+      null,
+      2
+    );
   }
 
   function importFeaturedOverrides(rawText) {
     try {
       const parsed = JSON.parse(rawText);
-      persistFeaturedOverrides(parsed);
+
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed) && (parsed.featured || parsed.reviews)) {
+        persistFeaturedOverrides(parsed.featured || {});
+        persistReviewOverrides(parsed.reviews || {});
+      } else {
+        persistFeaturedOverrides(parsed);
+      }
+
       return {
         ok: true,
         resources: getEffectiveResources()
@@ -502,6 +599,24 @@
     hintEl.textContent = `已连接仓库：${inferredRepo}`;
   }
 
+  function getCompactReviewLabel(reviewText, maxChars = 14) {
+    if (typeof reviewText !== "string") {
+      return "";
+    }
+
+    const compact = reviewText.trim();
+
+    if (!compact) {
+      return "";
+    }
+
+    if (compact.length <= maxChars) {
+      return compact;
+    }
+
+    return `${compact.slice(0, maxChars)}…`;
+  }
+
   window.nbHubData = {
     resourceData,
     trendNarrative,
@@ -510,13 +625,17 @@
     getBaseResources,
     getEffectiveResources,
     getFeaturedOverrides,
+    getReviewOverrides,
     updateFeaturedOverride,
     setFeaturedOverridesForIds,
     clearFeaturedOverrides,
+    updateAdminReviewOverride,
+    clearAdminReviewOverrides,
     exportFeaturedOverrides,
     importFeaturedOverrides,
     getCategories,
     buildExploreUrl,
-    setupSubmitLinks
+    setupSubmitLinks,
+    getCompactReviewLabel
   };
 })();
