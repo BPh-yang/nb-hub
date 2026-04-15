@@ -9,7 +9,7 @@
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23090b10'/%3E%3Cpath d='M18 46V18h9l10 14V18h9v28h-9L27 32v14z' fill='%2374e2c0'/%3E%3C/svg%3E"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260414c" />
+    <link rel="stylesheet" href="./styles.css?v=20260415a" />
   </head>
   <body>
     <div class="grain-layer" aria-hidden="true"></div>
@@ -46,33 +46,13 @@
           </div>
         </div>
 
-        <aside class="page-side" aria-label="管理状态">
-          <div class="page-side-head">
-            <h2>状态概览</h2>
-            <span id="admin-status">本地配置模式</span>
-          </div>
-          <ul class="side-list">
-            <li class="side-item">
-              <strong id="admin-featured-count">0 个项目</strong>
-              <p>当前生效的精选数量</p>
-            </li>
-            <li class="side-item">
-              <strong id="admin-override-count">0 条覆盖</strong>
-              <p>相对默认数据的本地改动</p>
-            </li>
-            <li class="side-item">
-              <strong>GitHub Pages 兼容</strong>
-              <p>无需数据库；如需跨设备同步，可先导出覆盖 JSON 再手动保存。</p>
-            </li>
-          </ul>
-        </aside>
       </section>
 
       <section class="section container reveal" id="admin-panel">
         <div class="section-head compact-head">
           <p class="section-kicker">Manage Picks</p>
           <h2>CMS 操作台</h2>
-          <p>这里支持单项确认、按当前类别或当前搜索结果批量操作，以及本地覆盖配置导出。</p>
+          <p>这里支持单项确认、批量操作、本地草稿管理，以及将配置发布到 GitHub 供所有访客共享。</p>
         </div>
 
         <div class="controls-panel admin-shell">
@@ -108,6 +88,7 @@
             <div class="admin-toolbar-copy">
               <p id="admin-result-summary">共 0 条结果</p>
               <p class="helper-copy" id="admin-scope-summary">批量操作会作用于当前分类与当前搜索结果。</p>
+              <p class="helper-copy admin-status-summary" id="admin-status-summary">当前使用默认配置 · 0 个当前精选 · 0 条精选覆盖 / 0 条短评覆盖</p>
             </div>
 
             <div class="admin-actions admin-actions-primary">
@@ -119,6 +100,44 @@
               <button type="button" class="text-btn" id="reset-featured">恢复默认精选</button>
               <button type="button" class="text-btn" id="reset-reviews">清空全部短评覆盖</button>
               <button type="button" class="text-btn" id="copy-overrides">复制覆盖 JSON</button>
+            </div>
+
+            <div class="publish-panel">
+              <div class="publish-panel-copy">
+                <p class="section-kicker">Publish</p>
+                <h3>发布到 GitHub</h3>
+                <p class="helper-copy">填写仓库信息和一个具有 repo 内容写权限的 GitHub Token，点击发布后会更新 `docs/admin-overrides.json`。</p>
+              </div>
+
+              <div class="publish-grid">
+                <label class="search-control" for="publish-owner">
+                  <span>Owner</span>
+                  <input id="publish-owner" type="text" placeholder="例如：BPh-yang" autocomplete="off" />
+                </label>
+                <label class="search-control" for="publish-repo">
+                  <span>Repo</span>
+                  <input id="publish-repo" type="text" placeholder="例如：nb-hub" autocomplete="off" />
+                </label>
+                <label class="search-control" for="publish-branch">
+                  <span>Branch</span>
+                  <input id="publish-branch" type="text" placeholder="main" autocomplete="off" />
+                </label>
+                <label class="search-control" for="publish-token">
+                  <span>GitHub Token</span>
+                  <input id="publish-token" type="password" placeholder="输入一次性 Token，不会写入仓库" autocomplete="off" />
+                </label>
+                <label class="search-control publish-message" for="publish-message">
+                  <span>Commit Message</span>
+                  <input id="publish-message" type="text" placeholder="Update admin overrides" autocomplete="off" />
+                </label>
+              </div>
+
+              <div class="admin-actions admin-actions-primary">
+                <button type="button" class="btn btn-ghost btn-small" id="reload-published">重新读取已发布配置</button>
+                <button type="button" class="btn btn-primary btn-small" id="publish-overrides">发布到 GitHub</button>
+              </div>
+
+              <p class="helper-copy publish-feedback" id="publish-feedback">发布完成后，所有访客刷新页面即可看到新的精选与短评。</p>
             </div>
           </div>
 
@@ -163,7 +182,8 @@
       </form>
     </dialog>
 
-    <script src="./data.js?v=20260414c"></script>
-    <script src="./admin.js?v=20260414c"></script>
+    <script src="./data.js?v=20260414d"></script>
+    <script src="./overrides.js?v=20260414d"></script>
+    <script src="./admin.js?v=20260415a"></script>
   </body>
 </html>

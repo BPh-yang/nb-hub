@@ -1,6 +1,6 @@
 (function initAdminPage() {
   const {
-    getEffectiveResources,
+    getAdminResources,
     getFeaturedOverrides,
     getReviewOverrides,
     getCategories,
@@ -9,7 +9,11 @@
     clearFeaturedOverrides,
     updateAdminReviewOverride,
     clearAdminReviewOverrides,
-    exportFeaturedOverrides
+    exportFeaturedOverrides,
+    getPublishSettings,
+    savePublishSettings,
+    publishOverridesToGitHub,
+    loadPublishedOverrides
   } = window.nbHubData;
 
   const elements = {
@@ -18,16 +22,22 @@
     categoryChips: document.getElementById("admin-category-chips"),
     resultSummary: document.getElementById("admin-result-summary"),
     scopeSummary: document.getElementById("admin-scope-summary"),
+    statusSummary: document.getElementById("admin-status-summary"),
     feedback: document.getElementById("admin-feedback"),
     adminGrid: document.getElementById("admin-grid"),
-    featuredCount: document.getElementById("admin-featured-count"),
-    overrideCount: document.getElementById("admin-override-count"),
-    status: document.getElementById("admin-status"),
     markCurrentFeatured: document.getElementById("mark-current-featured"),
     unmarkCurrentFeatured: document.getElementById("unmark-current-featured"),
     resetFeatured: document.getElementById("reset-featured"),
     resetReviews: document.getElementById("reset-reviews"),
     copyOverrides: document.getElementById("copy-overrides"),
+    publishOwner: document.getElementById("publish-owner"),
+    publishRepo: document.getElementById("publish-repo"),
+    publishBranch: document.getElementById("publish-branch"),
+    publishToken: document.getElementById("publish-token"),
+    publishMessage: document.getElementById("publish-message"),
+    reloadPublished: document.getElementById("reload-published"),
+    publishOverrides: document.getElementById("publish-overrides"),
+    publishFeedback: document.getElementById("publish-feedback"),
     confirmDialog: document.getElementById("confirm-dialog"),
     confirmTitle: document.getElementById("confirm-title"),
     confirmMessage: document.getElementById("confirm-message"),
@@ -44,7 +54,29 @@
   };
 
   function getResources() {
-    return getEffectiveResources();
+    return getAdminResources();
+  }
+
+  function setPublishFeedback(message) {
+    if (elements.publishFeedback) {
+      elements.publishFeedback.textContent = message;
+    }
+  }
+
+  function populatePublishSettings() {
+    const settings = getPublishSettings();
+    elements.publishOwner.value = settings.owner || "";
+    elements.publishRepo.value = settings.repo || "";
+    elements.publishBranch.value = settings.branch || "main";
+    elements.publishMessage.value = "Update admin overrides";
+  }
+
+  function persistPublishSettingsFromForm() {
+    return savePublishSettings({
+      owner: elements.publishOwner.value,
+      repo: elements.publishRepo.value,
+      branch: elements.publishBranch.value
+    });
   }
 
   function matchKeyword(item, keyword) {
@@ -128,13 +160,13 @@
     const overrides = getFeaturedOverrides();
     const reviewOverrides = getReviewOverrides();
     const featuredCount = resources.filter((item) => item.featured).length;
+    const featuredOverrideCount = Object.keys(overrides).length;
+    const reviewOverrideCount = Object.keys(reviewOverrides).length;
     const filtered = getFilteredResources();
     const scopeLabel = getScopeLabel();
+    const statusLabel = featuredOverrideCount > 0 || reviewOverrideCount > 0 ? "已启用本地覆盖" : "当前使用默认配置";
 
-    elements.featuredCount.textContent = `${featuredCount} 个项目`;
-    elements.overrideCount.textContent = `${Object.keys(overrides).length} 条精选覆盖 / ${Object.keys(reviewOverrides).length} 条短评覆盖`;
-    elements.status.textContent =
-      Object.keys(overrides).length > 0 || Object.keys(reviewOverrides).length > 0 ? "已启用本地覆盖" : "当前使用默认配置";
+    elements.statusSummary.textContent = `${statusLabel} · ${featuredCount} 个当前精选 · ${featuredOverrideCount} 条精选覆盖 / ${reviewOverrideCount} 条短评覆盖`;
     elements.scopeSummary.textContent = `${scopeLabel}中共有 ${filtered.length} 个项目，批量操作会先弹出确认框。`;
     elements.markCurrentFeatured.textContent = `${scopeLabel}一键全部精选`;
     elements.unmarkCurrentFeatured.textContent = `${scopeLabel}一键全部取消精选`;
@@ -275,10 +307,8 @@
 
     try {
       await navigator.clipboard.writeText(text);
-      elements.status.textContent = "已复制覆盖 JSON";
       setFeedback("已复制当前本地覆盖 JSON，可用于手动备份或跨设备同步。");
     } catch {
-      elements.status.textContent = "复制失败，可手动从控制台导出";
       setFeedback("复制失败，请检查浏览器剪贴板权限。");
     }
   }
@@ -375,6 +405,46 @@
     elements.copyOverrides.addEventListener("click", () => {
       copyOverrides();
     });
+
+    elements.reloadPublished.addEventListener("click", async () => {
+      await loadPublishedOverrides(true);
+      setFeedback("已重新读取已发布配置，并保留当前本地草稿。");
+      setPublishFeedback("已从 docs/admin-overrides.json 重新加载公开配置。");
+      renderAll();
+    });
+
+    elements.publishOverrides.addEventListener("click", async () => {
+      const settings = persistPublishSettingsFromForm();
+      const token = elements.publishToken.value.trim();
+
+      const confirmed = await openConfirmDialog({
+        title: "确认发布后台配置",
+        message: "确定要把当前草稿写入 docs/admin-overrides.json 吗？发布后所有访客刷新页面都能看到。",
+        confirmLabel: "确认发布"
+      });
+
+      if (!confirmed) {
+        setPublishFeedback("已取消发布到 GitHub。");
+        return;
+      }
+
+      try {
+        const result = await publishOverridesToGitHub({
+          token,
+          owner: settings.owner,
+          repo: settings.repo,
+          branch: settings.branch,
+          message: elements.publishMessage.value.trim() || "Update admin overrides"
+        });
+
+        elements.publishToken.value = "";
+        setFeedback("已将当前草稿发布为公开配置。");
+        setPublishFeedback(`发布成功：${result.commitSha || "已创建提交"}`);
+        renderAll();
+      } catch (error) {
+        setPublishFeedback(error instanceof Error ? error.message : "发布失败。");
+      }
+    });
   }
 
   function renderYear() {
@@ -389,11 +459,14 @@
     renderGrid();
   }
 
-  function init() {
+  async function init() {
+    await loadPublishedOverrides();
     bindEvents();
+    populatePublishSettings();
     renderAll();
     renderYear();
     setFeedback("你可以先切换分类，再执行当前视图范围的一键精选或一键取消精选。");
+    setPublishFeedback("发布完成后，所有访客刷新页面即可看到新的精选与短评。");
   }
 
   init();
