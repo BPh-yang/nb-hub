@@ -9,6 +9,7 @@ nb-hub 是一个专注于 AI 大模型外围生态的开源合集。项目以中
 - **资源可搜索筛选**：资源库页支持关键词搜索、分类筛选、仅看精选，并已内置真实 AI 生态项目示例。
 - **数据集中维护**：资源数据集中在 `docs/data.js` 中的 `resourceData`，便于扩展。
 - **精选 CMS 面板**：新增 `docs/admin.html`，支持单项确认、当前视图一键精选 / 一键取消精选，并即时同步前台展示。
+- **共享发布配置**：`docs/admin-overrides.json` 作为公开配置源，发布后所有访客都能看到新的精选与短评。
 - **可直接部署 GitHub Pages**：通过 GitHub Actions 自动将 `docs/` 部署为 Pages 站点。
 
 ## 目录结构
@@ -19,8 +20,10 @@ nb-hub 是一个专注于 AI 大模型外围生态的开源合集。项目以中
 │  ├─ index.html      # 首页结构（静态）
 │  ├─ explore.html    # 独立资源库页
 │  ├─ admin.html      # 精选项目管理页
+│  ├─ admin-overrides.json # 已发布的共享精选/短评配置
 │  ├─ styles.css      # 设计系统 tokens + 页面样式
 │  ├─ data.js         # 资源数据源 + 公共配置
+│  ├─ overrides.js    # 已发布配置读取、本地草稿与 GitHub 发布逻辑
 │  ├─ home.js         # 首页卡片入口渲染逻辑
 │  ├─ explore.js      # 资源库搜索/筛选逻辑
 │  ├─ admin.js        # 精选后台管理逻辑
@@ -35,6 +38,20 @@ nb-hub 是一个专注于 AI 大模型外围生态的开源合集。项目以中
 直接打开 `docs/index.html` 即可预览首页，也可以打开 `docs/explore.html` 预览资源库页。
 
 如果你要调整“编辑精选”，打开 `docs/admin.html` 即可。
+
+如果你要让后台改动对所有访客可见：
+
+1. 打开 `docs/admin.html`
+2. 填入 GitHub `owner`、`repo`、`branch`
+3. 输入一个具有仓库内容写权限的 GitHub Token
+4. 点击“发布到 GitHub”
+5. 页面会把当前草稿写入 `docs/admin-overrides.json`
+
+说明：
+
+- 前台公开页面只读取 `docs/admin-overrides.json`
+- 后台本地草稿不会自动对其他访客可见
+- 只有点击“发布到 GitHub”后，其他访客刷新页面才会看到更新
 
 > 说明：页面所有资源路径均为相对路径（如 `./styles.css`、`./data.js`、`./home.js`），可兼容 GitHub Project Pages（`/<repo>/`）路径部署。
 
