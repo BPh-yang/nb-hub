@@ -1,5 +1,5 @@
 (function initExplorePage() {
-  const { getEffectiveResources, getCategories, setupSubmitLinks, getCompactReviewLabel, loadPublishedOverrides } = window.nbHubData;
+  const { getEffectiveResources, getCategories, setupSubmitLinks, getCompactReviewLabel, loadPublishedOverrides, categoryIcons } = window.nbHubData;
   const categories = ["全部", ...getCategories()];
 
   const elements = {
@@ -79,7 +79,7 @@
             type="button"
             data-category="${category}"
           >
-            ${category}
+            ${category === "全部" ? "全部" : (categoryIcons[category] || "") + " " + category}
           </button>
         `
       )
@@ -98,28 +98,25 @@
     const summaryParts = [];
 
     if (filtered.length === 0) {
-      elements.resourceGrid.innerHTML = '<div class="empty-state">当前没有匹配结果。你可以尝试清空筛选或换一个关键词。</div>';
+      elements.resourceGrid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">当前没有匹配结果。你可以尝试清空筛选或换一个关键词。</div>';
     } else {
       elements.resourceGrid.innerHTML = filtered
         .map(
           (item) => `
             <a class="resource-card" href="${item.url}" target="_blank" rel="noreferrer">
+              <div class="card-category-bar" data-cat="${item.category}"></div>
               <div class="resource-head">
-                <span class="pill">${item.category}</span>
+                <span class="pill" data-cat="${item.category}">${categoryIcons[item.category] || ""} ${item.category}</span>
                 ${item.featured ? '<span class="pill is-featured">精选</span>' : `<span class="pill">${item.sourceType}</span>`}
               </div>
-              <div class="title-row">
-                <h3>${item.name}</h3>
-                ${item.adminReview ? `<div class="editor-note-pill" title="${item.adminReview}">${getCompactReviewLabel(item.adminReview)}</div>` : ""}
-              </div>
+              <h3>${item.name}</h3>
               <p class="resource-description">${item.description}</p>
               <div class="resource-meta">
-                <span class="tag">${item.sourceType}</span>
-                ${(item.tags || []).map((tag) => `<span class="tag">${tag}</span>`).join("")}
+                ${(item.tags || []).slice(0, 3).map((tag) => `<span class="tag">${tag}</span>`).join("")}
               </div>
               <div class="resource-footer">
-                <span>${item.score}</span>
-                <span>${item.sourceType === "Site" ? "访问站点 ↗" : "访问仓库 ↗"}</span>
+                <span>${item.score || ""}</span>
+                <span>${item.sourceType === "Site" ? "访问站点 ↗" : "打开仓库 ↗"}</span>
               </div>
             </a>
           `

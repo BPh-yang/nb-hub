@@ -287,6 +287,16 @@
     Collection: "精选清单、导航站与内容聚合项目，适合快速发现生态。"
   };
 
+  const categoryIcons = {
+    Framework: "⬡",
+    Tool: "⚙",
+    MCP: "◎",
+    Skill: "✦",
+    Infra: "⬡",
+    "Agent/App": "▶",
+    Collection: "⧫"
+  };
+
   const FEATURED_STORAGE_KEY = "nbHubFeaturedOverrides";
   const REVIEW_STORAGE_KEY = "nbHubAdminReviewOverrides";
 
@@ -621,6 +631,7 @@
     resourceData,
     trendNarrative,
     categoryMeta,
+    categoryIcons,
     preferredCategoryOrder,
     getBaseResources,
     getEffectiveResources,

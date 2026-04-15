@@ -1,5 +1,5 @@
 (function initHomePage() {
-  const { trendNarrative, categoryMeta, getCategories, buildExploreUrl, setupSubmitLinks, getEffectiveResources, getCompactReviewLabel, loadPublishedOverrides } = window.nbHubData;
+  const { trendNarrative, categoryMeta, categoryIcons, getCategories, buildExploreUrl, setupSubmitLinks, getEffectiveResources, getCompactReviewLabel, loadPublishedOverrides } = window.nbHubData;
 
   const elements = {
     categoryGrid: document.getElementById("category-grid"),
@@ -27,11 +27,13 @@
     elements.categoryGrid.innerHTML = categories
       .map((category) => {
         const items = resourceData.filter((item) => item.category === category);
+        const icon = categoryIcons[category] || "◉";
         return `
           <a class="entry-card" href="${buildExploreUrl({ category })}">
+            <div class="card-category-bar" data-cat="${category}"></div>
             <div class="card-head">
-              <span class="meta-chip">${items.length} 个条目</span>
-              <span class="pill">${category}</span>
+              <span class="meta-chip" data-cat="${category}">${icon} ${items.length} 项</span>
+              <span class="pill" data-cat="${category}">${category}</span>
             </div>
             <h3>${category}</h3>
             <p class="card-copy">${categoryMeta[category]}</p>
@@ -43,7 +45,7 @@
             </div>
             <div class="entry-footer">
               <span>进入该分类</span>
-              <span>→</span>
+              <span aria-hidden="true">→</span>
             </div>
           </a>
         `;
@@ -87,8 +89,8 @@
             <h3>${route.title}</h3>
             <p class="card-copy">${route.description}</p>
             <div class="card-action">
-              <span>跳转浏览页</span>
-              <span>→</span>
+              <span>浏览更多</span>
+              <span aria-hidden="true">→</span>
             </div>
           </a>
         `
@@ -97,26 +99,25 @@
   }
 
   function renderFeatureCards() {
-    const features = resourceData.filter((item) => item.featured).slice(0, 4);
+    const features = resourceData.filter((item) => item.featured).slice(0, 6);
     elements.featureGrid.innerHTML = features
       .map(
         (item) => `
           <a class="feature-card" href="${buildExploreUrl({ search: item.name })}">
+            <div class="card-category-bar" data-cat="${item.category}"></div>
             <div class="card-head">
               <span class="pill is-featured">精选</span>
-              <span class="pill">${item.category}</span>
+              <span class="pill" data-cat="${item.category}">${item.category}</span>
+              ${item.score ? `<span class="pill">${item.score}</span>` : ""}
             </div>
-            <div class="title-row">
-              <h3>${item.name}</h3>
-              ${item.adminReview ? `<div class="editor-note-pill" title="${item.adminReview}">${getCompactReviewLabel(item.adminReview)}</div>` : ""}
-            </div>
+            <h3>${item.name}</h3>
             <p class="card-copy">${item.description}</p>
             <div class="entry-meta">
               ${(item.tags || []).slice(0, 3).map((tag) => `<span class="tag">${tag}</span>`).join("")}
             </div>
             <div class="entry-footer">
-              <span>查看该项目所在上下文</span>
-              <span>→</span>
+              <span>查看上下文</span>
+              <span aria-hidden="true">→</span>
             </div>
           </a>
         `

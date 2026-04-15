@@ -13,7 +13,8 @@
     getPublishSettings,
     savePublishSettings,
     publishOverridesToGitHub,
-    loadPublishedOverrides
+    loadPublishedOverrides,
+    categoryIcons
   } = window.nbHubData;
 
   const elements = {
@@ -141,7 +142,7 @@
       .map(
         (category) => `
           <button class="chip ${state.category === category ? "active" : ""}" type="button" data-category="${category}">
-            ${category}
+            ${category === "全部" ? "全部" : (categoryIcons[category] || "") + " " + category}
           </button>
         `
       )
@@ -187,9 +188,10 @@
       .map(
         (item) => `
           <article class="admin-card ${item.featured ? "is-featured-card" : ""}">
+            <div class="card-category-bar" data-cat="${item.category}"></div>
             <div class="admin-card-top">
               <div class="card-head">
-                <span class="pill">${item.category}</span>
+                <span class="pill" data-cat="${item.category}">${categoryIcons[item.category] || ""} ${item.category}</span>
                 <span class="pill ${item.featured ? "is-featured" : ""}">${item.featured ? "当前精选" : item.sourceType}</span>
               </div>
               <button
