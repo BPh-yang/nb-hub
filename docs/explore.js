@@ -1,5 +1,5 @@
 (function initExplorePage() {
-  const { getEffectiveResources, getCategories, setupSubmitLinks, getCompactReviewLabel } = window.nbHubData;
+  const { getEffectiveResources, getCategories, setupSubmitLinks, getCompactReviewLabel, loadPublishedOverrides } = window.nbHubData;
   const categories = ["全部", ...getCategories()];
 
   const elements = {
@@ -9,10 +9,6 @@
     resultSummary: document.getElementById("result-summary"),
     resourceGrid: document.getElementById("results"),
     clearFilters: document.getElementById("clear-filters"),
-    totalCount: document.getElementById("total-count"),
-    activeCategory: document.getElementById("active-category"),
-    activeQuery: document.getElementById("active-query"),
-    activeSummary: document.getElementById("active-summary"),
     submitIssueLink: document.getElementById("submit-issue-link"),
     submitHint: document.getElementById("submit-hint"),
     year: document.getElementById("year")
@@ -99,6 +95,7 @@
 
   function renderResources() {
     const filtered = getFilteredResources();
+    const summaryParts = [];
 
     if (filtered.length === 0) {
       elements.resourceGrid.innerHTML = '<div class="empty-state">当前没有匹配结果。你可以尝试清空筛选或换一个关键词。</div>';
@@ -130,13 +127,6 @@
         .join("");
     }
 
-    elements.resultSummary.textContent = `共 ${filtered.length} 条结果`;
-    elements.totalCount.textContent = `${filtered.length} 个项目`;
-    elements.activeCategory.textContent = state.category;
-    elements.activeQuery.textContent = state.keyword || "无关键词";
-
-    const summaryParts = [];
-
     if (state.category !== "全部") {
       summaryParts.push(state.category);
     }
@@ -149,7 +139,7 @@
       summaryParts.push("仅精选");
     }
 
-    elements.activeSummary.textContent = summaryParts.length > 0 ? summaryParts.join(" · ") : "全部资源";
+    elements.resultSummary.textContent = `共 ${filtered.length} 条结果${summaryParts.length > 0 ? ` · ${summaryParts.join(" · ")}` : ""}`;
   }
 
   function bindEvents() {
@@ -183,7 +173,8 @@
     syncStateToQuery();
   }
 
-  function init() {
+  async function init() {
+    await loadPublishedOverrides();
     applyQueryToState();
     bindEvents();
     renderAll();

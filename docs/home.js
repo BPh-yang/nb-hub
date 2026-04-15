@@ -1,12 +1,11 @@
 (function initHomePage() {
-  const { trendNarrative, categoryMeta, getCategories, buildExploreUrl, setupSubmitLinks, getEffectiveResources, getCompactReviewLabel } = window.nbHubData;
+  const { trendNarrative, categoryMeta, getCategories, buildExploreUrl, setupSubmitLinks, getEffectiveResources, getCompactReviewLabel, loadPublishedOverrides } = window.nbHubData;
 
   const elements = {
     categoryGrid: document.getElementById("category-grid"),
     routeGrid: document.getElementById("route-grid"),
     featureGrid: document.getElementById("feature-grid"),
     insightGrid: document.getElementById("insight-grid"),
-    trendList: document.getElementById("trend-list"),
     metricTotal: document.getElementById("metric-total"),
     metricFeatured: document.getElementById("metric-featured"),
     metricCategories: document.getElementById("metric-categories"),
@@ -15,30 +14,13 @@
     year: document.getElementById("year")
   };
 
-  const resourceData = getEffectiveResources();
+  let resourceData = [];
   const categories = getCategories();
 
   function renderMetrics() {
     elements.metricTotal.textContent = String(resourceData.length);
     elements.metricFeatured.textContent = String(resourceData.filter((item) => item.featured).length);
     elements.metricCategories.textContent = String(categories.length);
-  }
-
-  function renderTrendList() {
-    const items = resourceData.filter((item) => item.featured).slice(0, 4);
-    elements.trendList.innerHTML = items
-      .map(
-        (item, index) => `
-          <li class="trend-item">
-            <div class="trend-head">
-              <span class="trend-badge">TOP ${index + 1}</span>
-              <span class="trend-name">${item.name}</span>
-            </div>
-            <p class="trend-note">${item.score}</p>
-          </li>
-        `
-      )
-      .join("");
   }
 
   function renderCategoryCards() {
@@ -160,9 +142,10 @@
     elements.year.textContent = String(new Date().getFullYear());
   }
 
-  function init() {
+  async function init() {
+    await loadPublishedOverrides();
+    resourceData = getEffectiveResources();
     renderMetrics();
-    renderTrendList();
     renderCategoryCards();
     renderRouteCards();
     renderFeatureCards();
