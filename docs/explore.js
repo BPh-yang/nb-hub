@@ -109,13 +109,16 @@
                 <span class="pill" data-cat="${item.category}">${categoryIcons[item.category] || ""} ${item.category}</span>
                 ${item.featured ? '<span class="pill is-featured">精选</span>' : `<span class="pill">${item.sourceType}</span>`}
               </div>
-              <h3>${item.name}</h3>
+              <div class="title-row">
+                <h3>${item.name}</h3>
+                ${item.adminReview ? `<span class="editor-note-pill" title="${item.adminReview}">${getCompactReviewLabel(item.adminReview)}</span>` : ""}
+              </div>
               <p class="resource-description">${item.description}</p>
               <div class="resource-meta">
                 ${(item.tags || []).slice(0, 3).map((tag) => `<span class="tag">${tag}</span>`).join("")}
               </div>
               <div class="resource-footer">
-                <span>${item.score || ""}</span>
+                <span>${(!item.adminReview && item.score) ? item.score : ""}</span>
                 <span>${item.sourceType === "Site" ? "访问站点 ↗" : "打开仓库 ↗"}</span>
               </div>
             </a>

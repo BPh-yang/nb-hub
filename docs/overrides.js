@@ -175,7 +175,7 @@
   }
 
   function getEffectiveResources() {
-    return getPublishedResources();
+    return getAdminResources();
   }
 
   function updateFeaturedOverride(resourceId, featured) {

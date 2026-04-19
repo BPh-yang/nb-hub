@@ -108,9 +108,12 @@
             <div class="card-head">
               <span class="pill is-featured">精选</span>
               <span class="pill" data-cat="${item.category}">${item.category}</span>
-              ${item.score ? `<span class="pill">${item.score}</span>` : ""}
+              ${item.score && !item.adminReview ? `<span class="pill">${item.score}</span>` : ""}
             </div>
-            <h3>${item.name}</h3>
+            <div class="title-row">
+              <h3>${item.name}</h3>
+              ${item.adminReview ? `<span class="editor-note-pill" title="${item.adminReview}">${getCompactReviewLabel(item.adminReview)}</span>` : ""}
+            </div>
             <p class="card-copy">${item.description}</p>
             <div class="entry-meta">
               ${(item.tags || []).slice(0, 3).map((tag) => `<span class="tag">${tag}</span>`).join("")}

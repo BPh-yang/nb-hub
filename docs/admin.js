@@ -14,7 +14,8 @@
     savePublishSettings,
     publishOverridesToGitHub,
     loadPublishedOverrides,
-    categoryIcons
+    categoryIcons,
+    getCompactReviewLabel
   } = window.nbHubData;
 
   const elements = {
@@ -204,7 +205,10 @@
                 ${item.featured ? "取消精选" : "设为精选"}
               </button>
             </div>
-            <h3>${item.name}</h3>
+            <div class="title-row">
+              <h3>${item.name}</h3>
+              ${item.adminReview ? `<span class="editor-note-pill" title="${item.adminReview}">${getCompactReviewLabel(item.adminReview)}</span>` : ""}
+            </div>
             <p class="card-copy">${item.description}</p>
             <div class="admin-state-row">
               <span class="tag">默认：${item.defaultFeatured ? "精选" : "非精选"}</span>
@@ -224,7 +228,7 @@
               ${(item.tags || []).slice(0, 4).map((tag) => `<span class="tag">${tag}</span>`).join("")}
             </div>
             <div class="resource-footer">
-              <span>${item.score}</span>
+              <span>${(!item.adminReview && item.score) ? item.score : ""}</span>
               <a class="text-link" href="${item.url}" target="_blank" rel="noreferrer">打开项目 ↗</a>
             </div>
           </article>
