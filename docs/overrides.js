@@ -5,25 +5,27 @@
     return;
   }
 
-  const FEATURED_STORAGE_KEY = "nbHubFeaturedOverrides";
-  const REVIEW_STORAGE_KEY = "nbHubAdminReviewOverrides";
-  const PUBLISH_SETTINGS_STORAGE_KEY = "nbHubPublishSettings";
   const PUBLISHED_OVERRIDES_PATH = "./admin-overrides.json";
 
-  let publishedOverridesState = {
-    featured: {},
-    reviews: {},
-    updatedAt: null
-  };
-
+  let publishedOverridesState = createEmptyOverrides();
+  let workingOverridesState = createEmptyOverrides();
   let publishedOverridesLoaded = false;
 
-  function getStorage() {
-    try {
-      return window.localStorage;
-    } catch {
-      return null;
-    }
+  function createEmptyOverrides() {
+    return {
+      featured: {},
+      reviews: {},
+      updatedAt: null
+    };
+  }
+
+  function cloneOverridesState(input) {
+    const safeInput = sanitizePublishedOverrides(input);
+    return {
+      featured: { ...safeInput.featured },
+      reviews: { ...safeInput.reviews },
+      updatedAt: safeInput.updatedAt
+    };
   }
 
   function getDefaultMaps() {
@@ -60,11 +62,7 @@
 
   function sanitizePublishedOverrides(input) {
     if (!input || typeof input !== "object" || Array.isArray(input)) {
-      return {
-        featured: {},
-        reviews: {},
-        updatedAt: null
-      };
+      return createEmptyOverrides();
     }
 
     return {
@@ -74,56 +72,44 @@
     };
   }
 
-  function readDraftOverrides(key, sanitize) {
-    const storage = getStorage();
-
-    if (!storage) {
-      return {};
-    }
-
-    try {
-      const raw = storage.getItem(key);
-      if (!raw) {
-        return {};
-      }
-
-      return sanitize(JSON.parse(raw));
-    } catch {
-      return {};
-    }
+  function setPublishedOverrides(input) {
+    publishedOverridesState = cloneOverridesState(input);
+    workingOverridesState = cloneOverridesState(publishedOverridesState);
+    publishedOverridesLoaded = true;
+    return getPublishedOverrides();
   }
 
-  function writeDraftOverrides(key, sanitize, input) {
-    const storage = getStorage();
-
-    if (!storage) {
-      return;
-    }
-
-    const safeInput = sanitize(input);
-
-    if (Object.keys(safeInput).length === 0) {
-      storage.removeItem(key);
-      return;
-    }
-
-    storage.setItem(key, JSON.stringify(safeInput));
+  function setWorkingOverrides(input) {
+    workingOverridesState = cloneOverridesState(input);
+    return getAdminResources();
   }
 
-  function getFeaturedDraftOverrides() {
-    return readDraftOverrides(FEATURED_STORAGE_KEY, sanitizeFeaturedOverrides);
+  function shallowEqualObjects(left, right) {
+    const leftKeys = Object.keys(left);
+    const rightKeys = Object.keys(right);
+
+    if (leftKeys.length !== rightKeys.length) {
+      return false;
+    }
+
+    return leftKeys.every((key) => Object.hasOwn(right, key) && left[key] === right[key]);
   }
 
-  function getReviewDraftOverrides() {
-    return readDraftOverrides(REVIEW_STORAGE_KEY, sanitizeReviewOverrides);
+  function hasPendingOverrideChanges() {
+    return !shallowEqualObjects(workingOverridesState.featured, publishedOverridesState.featured)
+      || !shallowEqualObjects(workingOverridesState.reviews, publishedOverridesState.reviews);
   }
 
   function getPublishedOverrides() {
-    return {
-      featured: { ...publishedOverridesState.featured },
-      reviews: { ...publishedOverridesState.reviews },
-      updatedAt: publishedOverridesState.updatedAt
-    };
+    return cloneOverridesState(publishedOverridesState);
+  }
+
+  function getFeaturedOverrides() {
+    return { ...workingOverridesState.featured };
+  }
+
+  function getReviewOverrides() {
+    return { ...workingOverridesState.reviews };
   }
 
   function applyOverrides(baseResources, featuredOverrides, reviewOverrides) {
@@ -154,15 +140,14 @@
       const response = await fetch(`${PUBLISHED_OVERRIDES_PATH}?v=${Date.now()}`, { cache: "no-store" });
 
       if (!response.ok) {
-        publishedOverridesState = sanitizePublishedOverrides({});
+        setPublishedOverrides(createEmptyOverrides());
       } else {
-        publishedOverridesState = sanitizePublishedOverrides(await response.json());
+        setPublishedOverrides(await response.json());
       }
     } catch {
-      publishedOverridesState = sanitizePublishedOverrides({});
+      setPublishedOverrides(createEmptyOverrides());
     }
 
-    publishedOverridesLoaded = true;
     return getPublishedOverrides();
   }
 
@@ -171,7 +156,7 @@
   }
 
   function getAdminResources() {
-    return applyOverrides(getPublishedResources(), getFeaturedDraftOverrides(), getReviewDraftOverrides());
+    return applyOverrides(data.getBaseResources(), workingOverridesState.featured, workingOverridesState.reviews);
   }
 
   function getEffectiveResources() {
@@ -179,71 +164,73 @@
   }
 
   function updateFeaturedOverride(resourceId, featured) {
-    const draft = getFeaturedDraftOverrides();
-    const publishedResource = getPublishedResources().find((item) => item.id === resourceId);
+    const defaults = getDefaultMaps().featured;
 
-    if (!publishedResource) {
+    if (typeof defaults[resourceId] !== "boolean") {
       return getAdminResources();
     }
 
-    if (featured === publishedResource.featured) {
-      delete draft[resourceId];
+    const nextState = cloneOverridesState(workingOverridesState);
+
+    if (featured === defaults[resourceId]) {
+      delete nextState.featured[resourceId];
     } else {
-      draft[resourceId] = featured;
+      nextState.featured[resourceId] = featured;
     }
 
-    writeDraftOverrides(FEATURED_STORAGE_KEY, sanitizeFeaturedOverrides, draft);
-    return getAdminResources();
+    return setWorkingOverrides(nextState);
   }
 
   function setFeaturedOverridesForIds(resourceIds, featured) {
-    const draft = getFeaturedDraftOverrides();
-    const publishedResources = getPublishedResources();
+    const defaults = getDefaultMaps().featured;
+    const nextState = cloneOverridesState(workingOverridesState);
 
     resourceIds.forEach((resourceId) => {
-      const publishedResource = publishedResources.find((item) => item.id === resourceId);
-
-      if (!publishedResource) {
+      if (typeof defaults[resourceId] !== "boolean") {
         return;
       }
 
-      if (featured === publishedResource.featured) {
-        delete draft[resourceId];
+      if (featured === defaults[resourceId]) {
+        delete nextState.featured[resourceId];
       } else {
-        draft[resourceId] = featured;
+        nextState.featured[resourceId] = featured;
       }
     });
 
-    writeDraftOverrides(FEATURED_STORAGE_KEY, sanitizeFeaturedOverrides, draft);
-    return getAdminResources();
+    return setWorkingOverrides(nextState);
   }
 
   function clearFeaturedOverrides() {
-    writeDraftOverrides(FEATURED_STORAGE_KEY, sanitizeFeaturedOverrides, {});
-    return getAdminResources();
+    return setWorkingOverrides({
+      ...workingOverridesState,
+      featured: {}
+    });
   }
 
   function updateAdminReviewOverride(resourceId, reviewText) {
-    const draft = getReviewDraftOverrides();
-    const publishedResource = getPublishedResources().find((item) => item.id === resourceId);
+    const defaults = getDefaultMaps().reviews;
+    const normalizedReview = typeof reviewText === "string" ? reviewText.trim() : "";
 
-    if (!publishedResource) {
+    if (typeof defaults[resourceId] !== "string") {
       return getAdminResources();
     }
 
-    if (reviewText === publishedResource.adminReview) {
-      delete draft[resourceId];
+    const nextState = cloneOverridesState(workingOverridesState);
+
+    if (!normalizedReview || normalizedReview === defaults[resourceId]) {
+      delete nextState.reviews[resourceId];
     } else {
-      draft[resourceId] = reviewText;
+      nextState.reviews[resourceId] = normalizedReview;
     }
 
-    writeDraftOverrides(REVIEW_STORAGE_KEY, sanitizeReviewOverrides, draft);
-    return getAdminResources();
+    return setWorkingOverrides(nextState);
   }
 
   function clearAdminReviewOverrides() {
-    writeDraftOverrides(REVIEW_STORAGE_KEY, sanitizeReviewOverrides, {});
-    return getAdminResources();
+    return setWorkingOverrides({
+      ...workingOverridesState,
+      reviews: {}
+    });
   }
 
   function buildPublishedOverridesPayload() {
@@ -276,9 +263,7 @@
   function importFeaturedOverrides(rawText) {
     try {
       const parsed = JSON.parse(rawText);
-      const normalized = sanitizePublishedOverrides(parsed);
-      writeDraftOverrides(FEATURED_STORAGE_KEY, sanitizeFeaturedOverrides, normalized.featured);
-      writeDraftOverrides(REVIEW_STORAGE_KEY, sanitizeReviewOverrides, normalized.reviews);
+      setWorkingOverrides(parsed);
       return {
         ok: true,
         resources: getAdminResources()
@@ -307,8 +292,24 @@
     };
   }
 
+  function inferGitHubRepo() {
+    const host = window.location.hostname;
+    const pathParts = window.location.pathname.split("/").filter(Boolean);
+
+    if (host.endsWith("github.io") && pathParts.length > 0) {
+      const owner = host.replace(".github.io", "");
+      const repo = pathParts[0];
+      return {
+        owner,
+        repo
+      };
+    }
+
+    return null;
+  }
+
   function inferPublishSettings() {
-    const inferredRepo = typeof data.inferGitHubRepo === "function" ? data.inferGitHubRepo() : null;
+    const inferredRepo = inferGitHubRepo();
 
     if (!inferredRepo) {
       return {
@@ -318,52 +319,30 @@
       };
     }
 
-    const match = inferredRepo.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)$/);
-
     return {
-      owner: match?.[1] || "",
-      repo: match?.[2] || "",
+      owner: inferredRepo.owner,
+      repo: inferredRepo.repo,
       branch: "main"
     };
   }
 
   function getPublishSettings() {
-    const storage = getStorage();
-    const inferred = inferPublishSettings();
-
-    if (!storage) {
-      return inferred;
-    }
-
-    try {
-      const raw = storage.getItem(PUBLISH_SETTINGS_STORAGE_KEY);
-      if (!raw) {
-        return inferred;
-      }
-
-      return {
-        ...inferred,
-        ...sanitizePublishSettings(JSON.parse(raw))
-      };
-    } catch {
-      return inferred;
-    }
+    return inferPublishSettings();
   }
 
   function savePublishSettings(settings) {
-    const storage = getStorage();
-    const safeSettings = sanitizePublishSettings(settings);
-
-    if (!storage) {
-      return safeSettings;
-    }
-
-    storage.setItem(PUBLISH_SETTINGS_STORAGE_KEY, JSON.stringify(safeSettings));
-    return safeSettings;
+    return sanitizePublishSettings(settings);
   }
 
   function encodeBase64Utf8(input) {
-    return btoa(unescape(encodeURIComponent(input)));
+    const bytes = new TextEncoder().encode(input);
+    let binary = "";
+
+    bytes.forEach((byte) => {
+      binary += String.fromCharCode(byte);
+    });
+
+    return btoa(binary);
   }
 
   async function publishOverridesToGitHub({ token, owner, repo, branch, message }) {
@@ -371,7 +350,17 @@
       throw new Error("缺少 GitHub 发布所需的 token / owner / repo / branch。");
     }
 
-    const payload = buildPublishedOverridesPayload();
+    if (publishedOverridesLoaded && !hasPendingOverrideChanges()) {
+      return {
+        payload: getPublishedOverrides(),
+        commitSha: "",
+        fileUrl: "",
+        branch,
+        skipped: true
+      };
+    }
+
+    const payload = sanitizePublishedOverrides(buildPublishedOverridesPayload());
     const path = "docs/admin-overrides.json";
     const endpoint = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
     const headers = {
@@ -413,16 +402,14 @@
     }
 
     const publishJson = await publishResponse.json();
-    publishedOverridesState = sanitizePublishedOverrides(payload);
-    publishedOverridesLoaded = true;
-    clearFeaturedOverrides();
-    clearAdminReviewOverrides();
+    setPublishedOverrides(payload);
 
     return {
       payload,
       commitSha: publishJson.commit?.sha || "",
       fileUrl: publishJson.content?.html_url || "",
-      branch
+      branch,
+      skipped: false
     };
   }
 
@@ -432,8 +419,8 @@
     getPublishedResources,
     getAdminResources,
     getEffectiveResources,
-    getFeaturedOverrides: getFeaturedDraftOverrides,
-    getReviewOverrides: getReviewDraftOverrides,
+    getFeaturedOverrides,
+    getReviewOverrides,
     updateFeaturedOverride,
     setFeaturedOverridesForIds,
     clearFeaturedOverrides,
@@ -443,6 +430,7 @@
     importFeaturedOverrides,
     getPublishSettings,
     savePublishSettings,
-    publishOverridesToGitHub
+    publishOverridesToGitHub,
+    hasPendingOverrideChanges
   });
 })();
