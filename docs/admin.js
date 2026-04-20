@@ -14,6 +14,7 @@
     savePublishSettings,
     publishOverridesToGitHub,
     loadPublishedOverrides,
+    hasPendingOverrideChanges,
     categoryIcons,
     getCompactReviewLabel
   } = window.nbHubData;
@@ -93,7 +94,7 @@
     return getResources().filter((item) => {
       const hitKeyword = matchKeyword(item, state.keyword);
       const hitCategory = state.category === "全部" ? true : item.category === state.category;
-      const hitOverride = state.overridesOnly ? item.hasFeaturedOverride : true;
+      const hitOverride = state.overridesOnly ? (item.hasFeaturedOverride || item.hasAdminReviewOverride) : true;
       return hitKeyword && hitCategory && hitOverride;
     });
   }
@@ -166,9 +167,9 @@
     const reviewOverrideCount = Object.keys(reviewOverrides).length;
     const filtered = getFilteredResources();
     const scopeLabel = getScopeLabel();
-    const statusLabel = featuredOverrideCount > 0 || reviewOverrideCount > 0 ? "已启用本地覆盖" : "当前使用默认配置";
+    const pendingLabel = hasPendingOverrideChanges() ? "有未发布修改" : "当前与已发布配置一致";
 
-    elements.statusSummary.textContent = `${statusLabel} · ${featuredCount} 个当前精选 · ${featuredOverrideCount} 条精选覆盖 / ${reviewOverrideCount} 条短评覆盖`;
+    elements.statusSummary.textContent = `${pendingLabel} · ${featuredCount} 个当前精选 · ${featuredOverrideCount} 条精选覆盖 / ${reviewOverrideCount} 条短评覆盖`;
     elements.scopeSummary.textContent = `${scopeLabel}中共有 ${filtered.length} 个项目，批量操作会先弹出确认框。`;
     elements.markCurrentFeatured.textContent = `${scopeLabel}一键全部精选`;
     elements.unmarkCurrentFeatured.textContent = `${scopeLabel}一键全部取消精选`;
@@ -181,7 +182,7 @@
     elements.resultSummary.textContent = `共 ${filtered.length} 条结果`;
 
     if (filtered.length === 0) {
-      elements.adminGrid.innerHTML = '<div class="empty-state">当前没有匹配项目。你可以清空筛选或取消“只看本地改动”。</div>';
+      elements.adminGrid.innerHTML = '<div class="empty-state">当前没有匹配项目。你可以清空筛选或取消“只看已修改项目”。</div>';
       return;
     }
 
@@ -313,7 +314,7 @@
 
     try {
       await navigator.clipboard.writeText(text);
-      setFeedback("已复制当前本地覆盖 JSON，可用于手动备份或跨设备同步。");
+      setFeedback("已复制当前待发布的 overrides JSON。");
     } catch {
       setFeedback("复制失败，请检查浏览器剪贴板权限。");
     }
@@ -377,7 +378,7 @@
     elements.resetFeatured.addEventListener("click", async () => {
       const confirmed = await openConfirmDialog({
         title: "确认恢复默认精选",
-        message: "确定要清空所有本地覆盖并恢复到 docs/data.js 中的默认精选状态吗？",
+        message: "确定要清空当前所有精选修改，并恢复到 docs/data.js 中的默认精选状态吗？",
         confirmLabel: "确认恢复"
       });
 
@@ -387,14 +388,14 @@
       }
 
       clearFeaturedOverrides();
-      setFeedback("已恢复默认精选配置。");
+      setFeedback("已恢复当前会话中的精选修改。发布后会同步到公开配置。");
       renderAll();
     });
 
     elements.resetReviews.addEventListener("click", async () => {
       const confirmed = await openConfirmDialog({
         title: "确认清空全部短评覆盖",
-        message: "确定要清空所有管理员短评覆盖，并恢复前台默认项目介绍吗？",
+        message: "确定要清空当前所有管理员短评修改，并恢复前台默认项目介绍吗？",
         confirmLabel: "确认清空"
       });
 
@@ -404,7 +405,7 @@
       }
 
       clearAdminReviewOverrides();
-      setFeedback("已清空全部管理员短评覆盖。");
+      setFeedback("已清空当前会话中的管理员短评修改。发布后会同步到公开配置。");
       renderAll();
     });
 
@@ -414,7 +415,7 @@
 
     elements.reloadPublished.addEventListener("click", async () => {
       await loadPublishedOverrides(true);
-      setFeedback("已重新读取已发布配置，并保留当前本地草稿。");
+      setFeedback("已重新读取 docs/admin-overrides.json，并覆盖当前未发布修改。");
       setPublishFeedback("已从 docs/admin-overrides.json 重新加载公开配置。");
       renderAll();
     });
@@ -425,7 +426,7 @@
 
       const confirmed = await openConfirmDialog({
         title: "确认发布后台配置",
-        message: "确定要把当前草稿写入 docs/admin-overrides.json 吗？发布后所有访客刷新页面都能看到。",
+        message: "确定要把当前修改写入 docs/admin-overrides.json 吗？发布后所有访客刷新页面都能看到。",
         confirmLabel: "确认发布"
       });
 
@@ -444,8 +445,13 @@
         });
 
         elements.publishToken.value = "";
-        setFeedback("已将当前草稿发布为公开配置。");
-        setPublishFeedback(`发布成功：${result.commitSha || "已创建提交"}`);
+        if (result.skipped) {
+          setFeedback("当前修改已经和已发布配置一致，无需重复发布。");
+          setPublishFeedback("没有检测到新的变更，未创建 Git 提交。");
+        } else {
+          setFeedback("已将当前修改发布为公开配置。");
+          setPublishFeedback(`发布成功：${result.commitSha || "已创建提交"}`);
+        }
         renderAll();
       } catch (error) {
         setPublishFeedback(error instanceof Error ? error.message : "发布失败。");
@@ -472,7 +478,7 @@
     renderAll();
     renderYear();
     setFeedback("你可以先切换分类，再执行当前视图范围的一键精选或一键取消精选。");
-    setPublishFeedback("发布完成后，所有访客刷新页面即可看到新的精选与短评。");
+    setPublishFeedback("当前修改只在本次打开的管理页里生效；点击“发布到 GitHub”后才会写入 docs/admin-overrides.json。");
   }
 
   init();

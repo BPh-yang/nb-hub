@@ -41,7 +41,7 @@
           <p class="eyebrow">Featured CMS</p>
           <h1>编辑精选管理面板</h1>
           <p class="lead">
-            调整精选状态、编写短评、批量操作，一键发布到公开配置。所有操作本地即时生效。
+            调整精选状态、编写短评、批量操作，然后将结果写回公开配置。
           </p>
           <div class="hero-actions">
             <a class="btn btn-ghost" href="./explore.html?featured=true">查看当前精选</a>
@@ -55,7 +55,7 @@
         <div class="section-head compact-head">
           <p class="section-kicker">Manage Picks</p>
           <h2>CMS 操作台</h2>
-          <p>这里支持单项确认、批量操作、本地草稿管理，以及将配置发布到 GitHub 供所有访客共享。</p>
+          <p>这里支持单项确认、批量操作，以及将当前修改发布到 GitHub 供所有访客共享。</p>
         </div>
 
         <div class="controls-panel admin-shell">
@@ -64,7 +64,7 @@
               <p class="section-kicker">Control Center</p>
               <h3>精选运营控制中心</h3>
             </div>
-            <span class="meta-chip">本地即时生效</span>
+            <span class="meta-chip">发布后全站可见</span>
           </div>
 
           <div class="controls-grid admin-controls-grid">
@@ -76,9 +76,9 @@
             <div class="toggle-group">
               <label class="toggle-control" for="admin-show-overrides">
                 <input id="admin-show-overrides" type="checkbox" />
-                <span>只看本地改动过的项目</span>
+                <span>只看已修改项目</span>
               </label>
-              <p class="helper-copy">这里的“改动”是相对 `docs/data.js` 默认精选值的覆盖。</p>
+              <p class="helper-copy">这里的“修改”是相对 `docs/data.js` 默认值和当前已发布配置的调整。</p>
             </div>
           </div>
 
@@ -140,7 +140,7 @@
                 <button type="button" class="btn btn-primary btn-small" id="publish-overrides">发布到 GitHub</button>
               </div>
 
-              <p class="helper-copy publish-feedback" id="publish-feedback">发布完成后，所有访客刷新页面即可看到新的精选与短评。</p>
+              <p class="helper-copy publish-feedback" id="publish-feedback">当前修改只存在于本次管理会话中；发布完成后，所有访客刷新页面即可看到新的精选与短评。</p>
             </div>
           </div>
 
@@ -155,7 +155,7 @@
           <p class="section-kicker">Sync Tip</p>
           <h2>如果你想跨设备同步</h2>
           <p>
-            当前后台是最轻量、最适合 GitHub Pages 的做法：配置保存在浏览器本地。如果你后面需要“任何设备都能统一管理精选”，下一步更适合升级为 GitHub Issue / JSON 文件驱动式后台。
+            当前后台已经以 `docs/admin-overrides.json` 作为唯一公开配置源。如果你后面需要“在多个设备上持续编辑未发布草稿”，那才值得再补一个真正的后端或草稿同步层。
           </p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="./explore.html?featured=true">打开精选结果页</a>
