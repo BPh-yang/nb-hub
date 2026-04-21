@@ -1037,10 +1037,11 @@ input[type="text"]::placeholder {
 .editor-note-pill {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   flex: 0 0 auto;
   max-width: min(48%, 240px);
   width: fit-content;
-  padding: 0.32rem 0.68rem;
+  padding: 0.34rem 0.74rem;
   border-radius: 999px;
   border: 1px solid rgba(251, 191, 36, 0.3);
   background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05));
@@ -1049,8 +1050,9 @@ input[type="text"]::placeholder {
   font-family: var(--font-ui);
   font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.01em;
-  line-height: 1.35;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

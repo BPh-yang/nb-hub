@@ -163,10 +163,9 @@
 
   function renderSummary() {
     const resources = getResources();
-    const overrides = getFeaturedOverrides();
     const reviewOverrides = getReviewOverrides();
     const featuredCount = resources.filter((item) => item.featured).length;
-    const featuredOverrideCount = Object.keys(overrides).length;
+    const featuredOverrideCount = resources.filter((item) => item.hasFeaturedOverride).length;
     const reviewOverrideCount = Object.keys(reviewOverrides).length;
     const filtered = getFilteredResources();
     const scopeLabel = getScopeLabel();

@@ -180,13 +180,14 @@
       const defaultAdminReview = item.adminReview || "";
       const hasFeaturedOverride = Object.hasOwn(featuredOverrides, item.id);
       const hasReviewOverride = Object.hasOwn(reviewOverrides, item.id);
+      const resolvedFeatured = hasFeaturedOverride ? featuredOverrides[item.id] : defaultFeatured;
 
       return {
         ...item,
         defaultFeatured,
         defaultAdminReview,
-        featured: hasFeaturedOverride ? featuredOverrides[item.id] : defaultFeatured,
-        hasFeaturedOverride,
+        featured: resolvedFeatured,
+        hasFeaturedOverride: resolvedFeatured !== defaultFeatured,
         adminReview: hasReviewOverride ? reviewOverrides[item.id] : defaultAdminReview,
         hasAdminReviewOverride: hasReviewOverride
       };
@@ -311,14 +312,10 @@
   function buildPublishedOverridesPayload() {
     const currentResources = getAdminResources();
     const defaults = getDefaultMaps();
-    const featured = {};
+    const featured = Object.fromEntries(currentResources.map((item) => [item.id, item.featured]));
     const reviews = {};
 
     currentResources.forEach((item) => {
-      if (item.featured !== defaults.featured[item.id]) {
-        featured[item.id] = item.featured;
-      }
-
       if ((item.adminReview || "") !== defaults.reviews[item.id]) {
         reviews[item.id] = item.adminReview || "";
       }
