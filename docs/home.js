@@ -70,7 +70,7 @@
       {
         title: "直达 MCP 生态",
         description: "只看 MCP 相关规范、服务器和导航站，适合最近在接工具链的人。",
-        href: buildExploreUrl({ category: "MCP" }),
+        href: buildExploreUrl({ category: "MCP 生态" }),
         badge: "协议专题"
       },
       {

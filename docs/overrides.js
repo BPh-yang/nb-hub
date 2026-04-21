@@ -6,6 +6,7 @@
   }
 
   const PUBLISHED_OVERRIDES_PATH = "./admin-overrides.json";
+  const LOCAL_DRAFT_STORAGE_KEY = "nb-hub-admin-overrides-draft";
 
   let publishedOverridesState = createEmptyOverrides();
   let workingOverridesState = createEmptyOverrides();
@@ -17,6 +18,14 @@
       reviews: {},
       updatedAt: null
     };
+  }
+
+  function canUseLocalStorage() {
+    try {
+      return typeof window.localStorage !== "undefined";
+    } catch {
+      return false;
+    }
   }
 
   function cloneOverridesState(input) {
@@ -72,15 +81,40 @@
     };
   }
 
+  function readLocalDraftOverrides() {
+    if (!canUseLocalStorage()) {
+      return createEmptyOverrides();
+    }
+
+    try {
+      const raw = window.localStorage.getItem(LOCAL_DRAFT_STORAGE_KEY);
+      return raw ? sanitizePublishedOverrides(JSON.parse(raw)) : createEmptyOverrides();
+    } catch {
+      return createEmptyOverrides();
+    }
+  }
+
+  function clearLocalDraftOverrides() {
+    if (!canUseLocalStorage()) {
+      return;
+    }
+
+    try {
+      window.localStorage.removeItem(LOCAL_DRAFT_STORAGE_KEY);
+    } catch {
+      // ignore storage failures
+    }
+  }
+
   function setPublishedOverrides(input) {
     publishedOverridesState = cloneOverridesState(input);
-    workingOverridesState = cloneOverridesState(publishedOverridesState);
     publishedOverridesLoaded = true;
     return getPublishedOverrides();
   }
 
   function setWorkingOverrides(input) {
     workingOverridesState = cloneOverridesState(input);
+    persistWorkingOverrides();
     return getAdminResources();
   }
 
@@ -98,6 +132,29 @@
   function hasPendingOverrideChanges() {
     return !shallowEqualObjects(workingOverridesState.featured, publishedOverridesState.featured)
       || !shallowEqualObjects(workingOverridesState.reviews, publishedOverridesState.reviews);
+  }
+
+  function persistWorkingOverrides() {
+    if (!canUseLocalStorage()) {
+      return;
+    }
+
+    try {
+      if (!hasPendingOverrideChanges()) {
+        clearLocalDraftOverrides();
+        return;
+      }
+
+      window.localStorage.setItem(
+        LOCAL_DRAFT_STORAGE_KEY,
+        JSON.stringify({
+          ...cloneOverridesState(workingOverridesState),
+          updatedAt: new Date().toISOString()
+        })
+      );
+    } catch {
+      // ignore storage failures
+    }
   }
 
   function getPublishedOverrides() {
@@ -146,6 +203,19 @@
       }
     } catch {
       setPublishedOverrides(createEmptyOverrides());
+    }
+
+    if (forceReload) {
+      clearLocalDraftOverrides();
+      setWorkingOverrides(publishedOverridesState);
+    } else {
+      const localDraft = readLocalDraftOverrides();
+      setWorkingOverrides(
+        !shallowEqualObjects(localDraft.featured, publishedOverridesState.featured)
+          || !shallowEqualObjects(localDraft.reviews, publishedOverridesState.reviews)
+          ? localDraft
+          : publishedOverridesState
+      );
     }
 
     return getPublishedOverrides();

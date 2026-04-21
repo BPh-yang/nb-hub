@@ -1,6 +1,6 @@
 # nb-hub
 
-nb-hub 是一个专注于 AI 大模型外围生态的开源合集。项目以中文优先方式聚合 AI Framework、Tool、MCP、Skill 与 Agent/Infra 资源，提供可直接浏览的静态导航首页。
+nb-hub 是一个专注于 AI 大模型外围生态的开源合集。项目以中文优先方式聚合开发框架、工具提效、MCP 生态、部署运维与应用导航资源，提供可直接浏览的静态导航首页。
 
 ## 项目特性
 
@@ -62,7 +62,7 @@ nb-hub 是一个专注于 AI 大模型外围生态的开源合集。项目以中
 ```js
 {
   name: "项目名",
-  category: "Framework | Tool | MCP | Skill | Infra | Agent/App | Collection",
+  category: "开发框架 | 工具提效 | MCP 生态 | 部署运维 | 应用与导航",
   description: "一句话说明",
   tags: ["标签1", "标签2"],
   url: "https://github.com/owner/repo",
@@ -72,15 +72,13 @@ nb-hub 是一个专注于 AI 大模型外围生态的开源合集。项目以中
 }
 ```
 
-当前首页分类包括：
+当前首页与资源库分类包括：
 
-- `Framework`：AI / Agent 应用开发框架
-- `Tool`：工作流、规范、编排与效率工具
-- `MCP`：Model Context Protocol 规范、服务与目录
-- `Skill`：Claude Code / coding agent 技能资产
-- `Infra`：网关、推理、路由与部署基础设施
-- `Agent/App`：AI 助手、智能体应用
-- `Collection`：导航站、精选清单、内容聚合
+- `开发框架`：AI / Agent 应用开发框架、多智能体框架与核心能力底座
+- `工具提效`：工作流、规范、编排工具，以及 Claude Code / coding agent 相关技能资产
+- `MCP 生态`：Model Context Protocol 规范、服务器、开发框架与导航目录
+- `部署运维`：网关、推理、路由、自托管与部署基础设施
+- `应用与导航`：AI 助手、智能体应用、精选清单、导航站与内容聚合
 
 ## GitHub Pages 部署说明
 

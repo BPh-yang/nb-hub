@@ -477,8 +477,8 @@
     populatePublishSettings();
     renderAll();
     renderYear();
-    setFeedback("你可以先切换分类，再执行当前视图范围的一键精选或一键取消精选。");
-    setPublishFeedback("当前修改只在本次打开的管理页里生效；点击“发布到 GitHub”后才会写入 docs/admin-overrides.json。");
+      setFeedback("你可以先切换分类并保存短评；当前浏览器中的首页和资源库刷新后会立即预览这些修改。");
+      setPublishFeedback("当前修改会先保存在当前浏览器；保存短评或精选后，本地可立即预览，点击“发布到 GitHub”后其他访客才会看到写入 docs/admin-overrides.json 的结果。");
   }
 
   init();

@@ -2,7 +2,7 @@
   const resourceData = [
     {
       name: "New API",
-      category: "Infra",
+      category: "部署运维",
       description: "下一代 LLM 网关与 AI 资产管理系统，支持多模型统一接入、渠道管理、计费和路由控制。",
       tags: ["LLM Gateway", "Proxy", "Billing", "Self-hosted"],
       url: "https://github.com/QuantumNous/new-api",
@@ -12,7 +12,7 @@
     },
     {
       name: "CC Switch",
-      category: "Tool",
+      category: "工具提效",
       description: "面向 Claude Code、Codex、Gemini CLI、OpenCode 等工具的一站式配置切换与管理桌面客户端。",
       tags: ["Claude Code", "CLI Manager", "MCP", "Cross-Platform"],
       url: "https://github.com/farion1231/cc-switch",
@@ -22,7 +22,7 @@
     },
     {
       name: "Claude Skills",
-      category: "Skill",
+      category: "工具提效",
       description: "收录大量生产级 Claude Code 技能与 agent 插件，可复用于多种 AI 编码工具工作流。",
       tags: ["Claude Code", "Agent Skills", "Plugin", "Workflow"],
       url: "https://github.com/alirezarezvani/claude-skills",
@@ -32,7 +32,7 @@
     },
     {
       name: "mcpservers.org",
-      category: "MCP",
+      category: "MCP 生态",
       description: "MCP Server 导航站，聚合官方与社区服务器，便于按能力快速发现可接入资源。",
       tags: ["Directory", "Model Context Protocol", "Server List", "Discovery"],
       url: "https://mcpservers.org/",
@@ -42,7 +42,7 @@
     },
     {
       name: "OpenSpec",
-      category: "Tool",
+      category: "工具提效",
       description: "AI 驱动的轻量规范工作流框架，帮助团队在编码前先对齐需求与交付边界。",
       tags: ["Spec Workflow", "AI Coding", "Planning", "Node.js"],
       url: "https://github.com/Fission-AI/OpenSpec",
@@ -52,7 +52,7 @@
     },
     {
       name: "QwenPaw",
-      category: "Agent/App",
+      category: "应用与导航",
       description: "AgentScope 团队推出的个人 AI 助手，支持多渠道接入、多智能体协作与本地模型能力。",
       tags: ["Assistant", "Multi-Agent", "Local Model", "Channels"],
       url: "https://github.com/agentscope-ai/QwenPaw",
@@ -62,7 +62,7 @@
     },
     {
       name: "Awesome Claude Skills",
-      category: "Collection",
+      category: "应用与导航",
       description: "围绕 Claude Skills 的精选导航清单，适合快速扫一遍官方与社区资源版图。",
       tags: ["Awesome List", "Claude Skills", "Resources", "Community"],
       url: "https://github.com/travisvn/awesome-claude-skills",
@@ -72,7 +72,7 @@
     },
     {
       name: "Superpowers",
-      category: "Skill",
+      category: "工具提效",
       description: "面向 AI 编程代理的软件开发工作流技能库，强调 TDD、系统化调试与并行开发。",
       tags: ["TDD", "Coding Agent", "Subagent", "Workflow"],
       url: "https://github.com/obra/superpowers",
@@ -82,7 +82,7 @@
     },
     {
       name: "Sub2API",
-      category: "Infra",
+      category: "部署运维",
       description: "面向订阅额度分发与多账号调度的 AI API 网关平台，支持计费、负载均衡与支付集成。",
       tags: ["API Gateway", "Quota", "Billing", "Load Balance"],
       url: "https://github.com/Wei-Shaw/sub2api",
@@ -92,7 +92,7 @@
     },
     {
       name: "Everything Claude Code",
-      category: "Collection",
+      category: "应用与导航",
       description: "Claude Code 生态资源聚合库，系统整理工具、集成、模板和最佳实践入口。",
       tags: ["Claude Code", "Resource Hub", "Integration", "Ecosystem"],
       url: "https://github.com/affaan-m/everything-claude-code",
@@ -102,7 +102,7 @@
     },
     {
       name: "BestBlogs",
-      category: "Collection",
+      category: "应用与导航",
       description: "AI 驱动的技术内容聚合平台，结合 RSS 与 LLM 进行文章评分、摘要和翻译。",
       tags: ["Content Hub", "RSS", "Summarization", "Translation"],
       url: "https://github.com/ginobefun/BestBlogs",
@@ -112,7 +112,7 @@
     },
     {
       name: "LangChain",
-      category: "Framework",
+      category: "开发框架",
       description: "最常见的 LLM 应用开发框架之一，适合构建检索增强、工具调用与多步骤编排流程。",
       tags: ["RAG", "Agent", "Workflow"],
       url: "https://github.com/langchain-ai/langchain",
@@ -122,7 +122,7 @@
     },
     {
       name: "LlamaIndex",
-      category: "Framework",
+      category: "开发框架",
       description: "面向知识库与数据接入的框架，强调文档索引、查询链路与企业数据集成能力。",
       tags: ["Knowledge", "Index", "RAG"],
       url: "https://github.com/run-llama/llama_index",
@@ -132,7 +132,7 @@
     },
     {
       name: "Haystack",
-      category: "Framework",
+      category: "开发框架",
       description: "以生产可维护性见长的 NLP/LLM 框架，适合构建可部署的问答与检索系统。",
       tags: ["Pipeline", "Search", "Production"],
       url: "https://github.com/deepset-ai/haystack",
@@ -142,7 +142,7 @@
     },
     {
       name: "Open WebUI",
-      category: "Tool",
+      category: "工具提效",
       description: "本地部署友好的 AI Web 面板，支持多模型接入、会话管理与团队化使用。",
       tags: ["Self-hosted", "UI", "Ops"],
       url: "https://github.com/open-webui/open-webui",
@@ -152,7 +152,7 @@
     },
     {
       name: "Flowise",
-      category: "Tool",
+      category: "工具提效",
       description: "可视化编排 LLM 应用流程，降低原型搭建门槛，适合快速验证业务流程。",
       tags: ["Low-code", "Workflow", "Prototype"],
       url: "https://github.com/FlowiseAI/Flowise",
@@ -162,7 +162,7 @@
     },
     {
       name: "Dify",
-      category: "Tool",
+      category: "工具提效",
       description: "面向团队的 LLM 应用平台，集成提示词、数据集、应用发布与监控链路。",
       tags: ["Platform", "LLMOps", "Team"],
       url: "https://github.com/langgenius/dify",
@@ -172,7 +172,7 @@
     },
     {
       name: "modelcontextprotocol",
-      category: "MCP",
+      category: "MCP 生态",
       description: "MCP 规范官方仓库，定义模型与外部能力（工具、资源、提示）的标准连接方式。",
       tags: ["Protocol", "Standard", "Spec"],
       url: "https://github.com/modelcontextprotocol",
@@ -182,7 +182,7 @@
     },
     {
       name: "MCP Servers",
-      category: "MCP",
+      category: "MCP 生态",
       description: "社区维护的 MCP Server 集合，可快速接入文件系统、数据库、浏览器等能力。",
       tags: ["Server", "Integration", "Ecosystem"],
       url: "https://github.com/modelcontextprotocol/servers",
@@ -192,7 +192,7 @@
     },
     {
       name: "FastMCP",
-      category: "MCP",
+      category: "MCP 生态",
       description: "Python 侧 MCP 服务器开发框架，简化工具暴露、资源注册与协议兼容。",
       tags: ["Python", "Server", "DX"],
       url: "https://github.com/jlowin/fastmcp",
@@ -202,7 +202,7 @@
     },
     {
       name: "OpenHands",
-      category: "Agent/App",
+      category: "应用与导航",
       description: "面向软件工程任务的智能代理平台，强调可执行、可验证、可迭代的开发流程。",
       tags: ["Coding Agent", "Automation", "Dev"],
       url: "https://github.com/All-Hands-AI/OpenHands",
@@ -212,7 +212,7 @@
     },
     {
       name: "AutoGen",
-      category: "Framework",
+      category: "开发框架",
       description: "多智能体协作框架，适合构建复杂任务分工、工具调用与代理间通信实验。",
       tags: ["Multi-Agent", "Experiment", "Framework"],
       url: "https://github.com/microsoft/autogen",
@@ -222,7 +222,7 @@
     },
     {
       name: "CrewAI",
-      category: "Framework",
+      category: "开发框架",
       description: "以“角色 + 任务 + 流程”建模代理协作的框架，适合业务流程自动化尝试。",
       tags: ["Role-based", "Agent", "Workflow"],
       url: "https://github.com/crewAIInc/crewAI",
@@ -232,7 +232,7 @@
     },
     {
       name: "LiteLLM",
-      category: "Infra",
+      category: "部署运维",
       description: "统一多家模型服务调用接口，降低模型切换与成本优化门槛。",
       tags: ["Gateway", "Model Router", "Cost"],
       url: "https://github.com/BerriAI/litellm",
@@ -242,7 +242,7 @@
     },
     {
       name: "vLLM",
-      category: "Infra",
+      category: "部署运维",
       description: "高性能推理引擎，适用于大规模并发与吞吐优先的模型服务部署。",
       tags: ["Inference", "Performance", "Serving"],
       url: "https://github.com/vllm-project/vllm",
@@ -252,7 +252,7 @@
     },
     {
       name: "Ollama",
-      category: "Infra",
+      category: "部署运维",
       description: "本地大模型运行与分发工具，降低私有化部署与开发测试门槛。",
       tags: ["Local LLM", "Self-hosted", "Dev"],
       url: "https://github.com/ollama/ollama",
@@ -278,26 +278,22 @@
   ];
 
   const categoryMeta = {
-    Framework: "用于构建 AI / Agent 应用核心能力的开发框架。",
-    Tool: "聚焦工作流、规范、编排与开发效率的实用工具。",
-    MCP: "围绕 Model Context Protocol 的规范、服务与目录资源。",
-    Skill: "面向 Claude Code / coding agent 的可复用技能与工作流资产。",
-    Infra: "提供网关、推理、路由与部署能力的 AI 基础设施。",
-    "Agent/App": "直接面向任务执行、助手交互或个人生产力的 AI 应用。",
-    Collection: "精选清单、导航站与内容聚合项目，适合快速发现生态。"
+    "开发框架": "用于构建 AI / Agent 应用、工作流与多智能体能力的核心框架。",
+    "工具提效": "聚焦开发效率、工作流编排、规范沉淀与技能复用的实用工具。",
+    "MCP 生态": "围绕 Model Context Protocol 的规范、服务器、开发框架与导航资源。",
+    "部署运维": "提供模型接入、网关、推理、路由、自托管与部署能力的基础设施。",
+    "应用与导航": "可直接使用的 AI 应用，以及精选清单、导航站和内容聚合入口。"
   };
 
   const categoryIcons = {
-    Framework: "⬡",
-    Tool: "⚙",
-    MCP: "◎",
-    Skill: "✦",
-    Infra: "⬡",
-    "Agent/App": "▶",
-    Collection: "⧫"
+    "开发框架": "⬡",
+    "工具提效": "⚙",
+    "MCP 生态": "◎",
+    "部署运维": "⬢",
+    "应用与导航": "⧫"
   };
 
-  const preferredCategoryOrder = ["Framework", "Tool", "MCP", "Skill", "Infra", "Agent/App", "Collection"];
+  const preferredCategoryOrder = ["开发框架", "工具提效", "MCP 生态", "部署运维", "应用与导航"];
 
   function getResourceId(item) {
     return item.name
