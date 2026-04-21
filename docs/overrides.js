@@ -28,6 +28,11 @@
     }
   }
 
+  function isLocalPreviewMode() {
+    const { protocol, hostname } = window.location;
+    return protocol === "file:" || hostname === "localhost" || hostname === "127.0.0.1" || hostname === "[::1]";
+  }
+
   function cloneOverridesState(input) {
     const safeInput = sanitizePublishedOverrides(input);
     return {
@@ -82,20 +87,20 @@
   }
 
   function readLocalDraftOverrides() {
-    if (!canUseLocalStorage()) {
-      return createEmptyOverrides();
+    if (!isLocalPreviewMode() || !canUseLocalStorage()) {
+      return null;
     }
 
     try {
       const raw = window.localStorage.getItem(LOCAL_DRAFT_STORAGE_KEY);
-      return raw ? sanitizePublishedOverrides(JSON.parse(raw)) : createEmptyOverrides();
+      return raw ? sanitizePublishedOverrides(JSON.parse(raw)) : null;
     } catch {
-      return createEmptyOverrides();
+      return null;
     }
   }
 
   function clearLocalDraftOverrides() {
-    if (!canUseLocalStorage()) {
+    if (!isLocalPreviewMode() || !canUseLocalStorage()) {
       return;
     }
 
@@ -135,7 +140,7 @@
   }
 
   function persistWorkingOverrides() {
-    if (!canUseLocalStorage()) {
+    if (!isLocalPreviewMode() || !canUseLocalStorage()) {
       return;
     }
 
@@ -210,12 +215,12 @@
       setWorkingOverrides(publishedOverridesState);
     } else {
       const localDraft = readLocalDraftOverrides();
-      setWorkingOverrides(
-        !shallowEqualObjects(localDraft.featured, publishedOverridesState.featured)
-          || !shallowEqualObjects(localDraft.reviews, publishedOverridesState.reviews)
-          ? localDraft
-          : publishedOverridesState
-      );
+
+      if (localDraft) {
+        setWorkingOverrides(localDraft);
+      } else {
+        setWorkingOverrides(publishedOverridesState);
+      }
     }
 
     return getPublishedOverrides();
@@ -501,6 +506,7 @@
     getPublishSettings,
     savePublishSettings,
     publishOverridesToGitHub,
-    hasPendingOverrideChanges
+    hasPendingOverrideChanges,
+    isLocalPreviewMode
   });
 })();

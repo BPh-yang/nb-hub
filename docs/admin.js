@@ -15,9 +15,12 @@
     publishOverridesToGitHub,
     loadPublishedOverrides,
     hasPendingOverrideChanges,
+    isLocalPreviewMode,
     categoryIcons,
     getCompactReviewLabel
   } = window.nbHubData;
+
+  const localPreviewMode = typeof isLocalPreviewMode === "function" && isLocalPreviewMode();
 
   const elements = {
     searchInput: document.getElementById("admin-search"),
@@ -477,8 +480,16 @@
     populatePublishSettings();
     renderAll();
     renderYear();
-      setFeedback("你可以先切换分类并保存短评；当前浏览器中的首页和资源库刷新后会立即预览这些修改。");
-      setPublishFeedback("当前修改会先保存在当前浏览器；保存短评或精选后，本地可立即预览，点击“发布到 GitHub”后其他访客才会看到写入 docs/admin-overrides.json 的结果。");
+      setFeedback(
+        localPreviewMode
+          ? "你可以先切换分类并保存短评；当前浏览器中的首页和资源库刷新后会立即预览这些修改。"
+          : "你可以先切换分类并保存短评；未发布前，这些修改只保留在当前管理页会话中。"
+      );
+      setPublishFeedback(
+        localPreviewMode
+          ? "当前修改会先保存在当前浏览器；保存短评或精选后，本地可立即预览，点击“发布到 GitHub”后其他访客才会看到写入 docs/admin-overrides.json 的结果。"
+          : "当前修改只在本次管理页会话中生效；点击“发布到 GitHub”后，其他访客才会看到写入 docs/admin-overrides.json 的结果。"
+      );
   }
 
   init();
