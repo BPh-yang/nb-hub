@@ -1,8 +1,21 @@
 {
-  "featured": {},
+  "featured": {
+    "claude-skills": false,
+    "mcpservers-org": false,
+    "openspec": false,
+    "sub2api": true,
+    "langchain": false,
+    "llamaindex": false,
+    "open-webui": false,
+    "dify": false,
+    "modelcontextprotocol": false,
+    "mcp-servers": false,
+    "litellm": false,
+    "vllm": false
+  },
   "reviews": {
     "new-api": "中转的神",
     "cc-switch": "协议转换一键配置"
   },
-  "updatedAt": "2026-04-21T07:04:26.321Z"
+  "updatedAt": "2026-04-21T07:08:18.661Z"
 }
