@@ -1,21 +1,35 @@
 {
   "featured": {
+    "new-api": true,
+    "cc-switch": true,
     "claude-skills": false,
     "mcpservers-org": false,
     "openspec": false,
-    "sub2api": true,
+    "qwenpaw": false,
+    "awesome-claude-skills": false,
+    "superpowers": false,
+    "sub2api": false,
+    "everything-claude-code": false,
+    "bestblogs": false,
     "langchain": false,
     "llamaindex": false,
+    "haystack": false,
     "open-webui": false,
+    "flowise": false,
     "dify": false,
     "modelcontextprotocol": false,
     "mcp-servers": false,
+    "fastmcp": false,
+    "openhands": false,
+    "autogen": false,
+    "crewai": false,
     "litellm": false,
-    "vllm": false
+    "vllm": false,
+    "ollama": false
   },
   "reviews": {
     "new-api": "中转的神",
     "cc-switch": "协议转换一键配置"
   },
-  "updatedAt": "2026-04-21T07:08:18.661Z"
+  "updatedAt": "2026-04-21T07:36:40.247Z"
 }
