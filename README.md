@@ -3,7 +3,7 @@
 > AI 大模型外围生态聚合平台 · 中文优先 · 纯静态部署
 
 <p align="center">
-[🚀 在线体验](https://nb.howmy.buzz/) · [📚 资源库](https://nb.howmy.buzz/explore.html)
+  <a href="https://nb.howmy.buzz/">🚀 在线体验</a> · <a href="https://nb.howmy.buzz/explore.html">📚 资源库</a>
 </p>
 
 nb-hub 是一个面向 AI / LLM 外围生态的资源聚合站，聚焦 **开发框架、工具提效、MCP 生态、部署运维、应用与导航** 五个方向。它不是把所有链接粗暴堆在一个页面里，而是先用首页做分类入口、快速入口与精选卡片，再把完整浏览、搜索与筛选放到独立资源库页。
