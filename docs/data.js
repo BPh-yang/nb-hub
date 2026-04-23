@@ -259,6 +259,56 @@
       sourceType: "GitHub",
       featured: false,
       score: "本地优先"
+    },
+    {
+      name: "Learn Skills",
+      category: "应用与导航",
+      description: "AI Agent 技能聚合平台，收录 Claude Code、Cursor 等编码助手的社区技能模块，提供排行榜与技能发现。",
+      tags: ["Skills", "Directory", "Claude Code", "Agent Skills", "Leaderboard"],
+      url: "https://github.com/NeverSight/learn-skills.dev",
+      sourceType: "GitHub",
+      featured: false,
+      score: "技能发现"
+    },
+    {
+      name: "MCP Server Fetch",
+      category: "MCP 生态",
+      description: "MCP 官方参考实现之一，提供网页内容抓取与转换能力，让 LLM 高效获取和消费 Web 资源。",
+      tags: ["MCP Server", "Fetch", "Web Scraping", "Reference"],
+      url: "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
+      sourceType: "GitHub",
+      featured: false,
+      score: "官方参考"
+    },
+    {
+      name: "Context7 MCP",
+      category: "MCP 生态",
+      description: "Upstash 出品的文档检索 MCP 服务器，为 LLM 和 AI 编辑器实时拉取最新库文档，消除幻觉与过时信息。",
+      tags: ["MCP Server", "Documentation", "LLM Context", "Real-time"],
+      url: "https://github.com/upstash/context7",
+      sourceType: "GitHub",
+      featured: true,
+      score: "文档实时"
+    },
+    {
+      name: "Playwright MCP",
+      category: "MCP 生态",
+      description: "微软官方出品的浏览器自动化 MCP 服务器，支持页面导航、截图、点击填写等完整浏览器操作链路。",
+      tags: ["MCP Server", "Browser Automation", "Playwright", "Microsoft"],
+      url: "https://github.com/microsoft/playwright-mcp",
+      sourceType: "GitHub",
+      featured: true,
+      score: "浏览器自动化"
+    },
+    {
+      name: "Scrapling Fetch MCP",
+      category: "MCP 生态",
+      description: "基于 Scrapling 的 MCP 抓取服务器，帮助 AI 助手绕过反爬机制获取网页文本与 Markdown 内容。",
+      tags: ["MCP Server", "Web Scraping", "Anti-bot", "Stealth"],
+      url: "https://github.com/cyberchitta/scrapling-fetch-mcp",
+      sourceType: "GitHub",
+      featured: false,
+      score: "反爬抓取"
     }
   ];
 
